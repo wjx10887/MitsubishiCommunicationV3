@@ -1,0 +1,160 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\devicemonitorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\devicemonitorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\connectionmonitorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\connectionmonitorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\connectionmonitorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\connectionmonitorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\errorcodelookupform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\errorcodelookupform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 10,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0c720079-b2d5-4f29-840e-382783199460}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d375ef0d-9946-4920-bae8-e432ebc42c55}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DeviceMonitorForm.cs",
+              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\DeviceMonitorForm.cs",
+              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\DeviceMonitorForm.cs",
+              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\DeviceMonitorForm.cs",
+              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\DeviceMonitorForm.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAQwA4AAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T12:25:40.893Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ConnectionMonitorForm.cs",
+              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs",
+              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs",
+              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs",
+              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAuwI8AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T12:23:00.294Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ConnectionMonitorForm.cs [\u8BBE\u8BA1]",
+              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs",
+              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs",
+              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs [\u8BBE\u8BA1]",
+              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\ConnectionMonitorForm.cs [\u8BBE\u8BA1]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T12:22:46.049Z",
+              "EditorCaption": " [\u8BBE\u8BA1]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ErrorCodeLookupForm.cs",
+              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\ErrorCodeLookupForm.cs",
+              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\ErrorCodeLookupForm.cs",
+              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\ErrorCodeLookupForm.cs",
+              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\ErrorCodeLookupForm.cs",
+              "ViewState": "AgIAABkBAAAAAAAAAAAgwOMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T11:33:20.333Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MainForm.cs [\u8BBE\u8BA1]",
+              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
+              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
+              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs [\u8BBE\u8BA1]",
+              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs [\u8BBE\u8BA1]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T09:28:06.414Z",
+              "EditorCaption": " [\u8BBE\u8BA1]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
+              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
+              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
+              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
+              "ViewState": "AgIAAFUAAAAAAAAAAAAQwMgFAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T07:54:41.421Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

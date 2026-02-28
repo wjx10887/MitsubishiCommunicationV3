@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "MelsecPLCCommunicator.UI": {
+      "commandName": "Project",
+      "applicationUrl": "",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

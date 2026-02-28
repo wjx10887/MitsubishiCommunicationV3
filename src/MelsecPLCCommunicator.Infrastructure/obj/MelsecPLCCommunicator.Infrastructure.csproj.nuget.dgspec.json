@@ -1,0 +1,112 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj": {}
+  },
+  "projects": {
+    "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj",
+        "projectName": "MelsecPLCCommunicator.Domain",
+        "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj",
+        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
+        "outputPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "targetAlias": "net472",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net472": {
+          "targetAlias": "net472",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj",
+        "projectName": "MelsecPLCCommunicator.Infrastructure",
+        "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
+        "outputPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "targetAlias": "net472",
+            "projectReferences": {
+              "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
+                "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net472": {
+          "targetAlias": "net472",
+          "dependencies": {
+            "HslCommunication": {
+              "target": "Package",
+              "version": "[10.6.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

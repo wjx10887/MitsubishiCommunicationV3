@@ -1,0 +1,10 @@
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Release\MelsecPLCCommunicator.Infrastructure.dll
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Release\MelsecPLCCommunicator.Infrastructure.pdb
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.csproj.AssemblyReference.cache
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.AssemblyInfoInputs.cache
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.AssemblyInfo.cs
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.csproj.CoreCompileInputs.cache
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPL.DA8B041C.Up2Date
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.dll
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Release\MelsecPLCCommunicator.Infrastructure.pdb

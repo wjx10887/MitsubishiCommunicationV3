@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "0DmkJU7br94=",
+  "success": true,
+  "projectFilePath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Administrator\\.nuget\\packages\\hslcommunication\\10.6.0\\hslcommunication.10.6.0.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
