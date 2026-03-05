@@ -202,21 +202,33 @@ namespace MelsecPLCCommunicator.UI
             {
                 switch (dataTypeStr?.ToUpper())
                 {
-                    case "X": return DataType.X;
-                    case "Y": return DataType.Y;
-                    case "M": return DataType.M;
-                    case "L": return DataType.L;
-                    case "B": return DataType.B;
+                    // 位数据类型
+                    case "X": return DataType.X; // 输入继电器
+                    case "Y": return DataType.Y; // 输出继电器
+                    case "M": return DataType.M; // 内部继电器
+                    case "L": return DataType.L; // 锁存继电器
+                    case "B": return DataType.B; // 位数据寄存器
                     case "S": return DataType.M; // S类型映射到M类型（枚举中没有S类型）
-                    case "C": return DataType.C;
-                    case "T": return DataType.T;
-                    case "D": return DataType.D;
-                    case "R": return DataType.R;
-                    case "ZR": return DataType.ZR;
-                    case "D32": return DataType.D32;
-                    case "FLOAT": return DataType.Float;
-                    case "F64": return DataType.F64;
-                    case "W": return DataType.W;
+                    case "TS": return DataType.TS; // 定时器接点
+                    case "CS": return DataType.CS; // 计数器接点
+                    case "TC": return DataType.TC; // 定时器线圈
+                    case "CC": return DataType.CC; // 计数器线圈
+                    
+                    // 字数据类型
+                    case "D": return DataType.D; // 数据寄存器
+                    case "W": return DataType.W; // 特殊寄存器
+                    case "R": return DataType.R; // 文件寄存器
+                    case "ZR": return DataType.ZR; // 字数据寄存器
+                    case "T": return DataType.T; // 定时器
+                    case "C": return DataType.C; // 计数器
+                    
+                    // 双字数据类型
+                    case "D32": return DataType.D32; // 双字数据寄存器
+                    case "FLOAT": return DataType.Float; // 单精度浮点数
+                    case "F": return DataType.Float; // 单精度浮点数
+                    case "F64": return DataType.F64; // 双精度浮点数
+                    case "DF": return DataType.F64; // 双精度浮点数
+                    
                     default: return DataType.M; // 默认返回M类型
                 }
             }
@@ -412,6 +424,7 @@ namespace MelsecPLCCommunicator.UI
                 // 收集所有读取请求
                 var readRequests = new List<BatchReadRequest>();
                 var validRows = new List<DataGridViewRow>();
+                int invalidCount = 0;
                 
                 foreach (DataGridViewRow row in dataGridViewBatch.Rows)
                 {
@@ -421,18 +434,30 @@ namespace MelsecPLCCommunicator.UI
                         string dataType = row.Cells["columnDataType"].Value?.ToString();
                         if (!string.IsNullOrEmpty(address) && !string.IsNullOrEmpty(dataType))
                         {
-                            readRequests.Add(new BatchReadRequest
+                            try
                             {
-                                Address = address,
-                                DataType = StringToDataType(dataType),
-                                Length = 1
-                            });
-                            validRows.Add(row);
+                                var dataTypeEnum = StringToDataType(dataType);
+                                readRequests.Add(new BatchReadRequest
+                                {
+                                    Address = address,
+                                    DataType = dataTypeEnum,
+                                    Length = 1
+                                });
+                                validRows.Add(row);
+                                row.Cells["columnResult"].Value = "读取中...";
+                            }
+                            catch (Exception ex)
+                            {
+                                row.Cells["columnResult"].Value = $"错误: {ex.Message}";
+                                _logService.Warning($"数据类型转换错误: {dataType}");
+                                invalidCount++;
+                            }
                         }
                         else
                         {
                             row.Cells["columnResult"].Value = "错误: 地址或数据类型为空";
                             _logService.Warning("地址或数据类型为空");
+                            invalidCount++;
                         }
                     }
                 }
@@ -440,25 +465,54 @@ namespace MelsecPLCCommunicator.UI
                 // 执行批量读取
                 if (readRequests.Count > 0)
                 {
-                    var result = await _readWriteService.BatchReadAsync(readRequests.ToArray());
-                    if (result.Success)
+                    _logService.Info($"执行批量读取，共 {readRequests.Count} 条数据");
+                    
+                    // 禁用按钮，防止重复操作
+                    btnReadAll.Enabled = false;
+                    btnWriteAll.Enabled = false;
+                    
+                    try
                     {
-                        for (int i = 0; i < result.Data.Length && i < validRows.Count; i++)
+                        var result = await _readWriteService.BatchReadAsync(readRequests.ToArray());
+                        if (result.Success)
                         {
-                            var row = validRows[i];
-                            row.Cells["columnValue"].Value = result.Data[i];
-                            row.Cells["columnResult"].Value = "成功";
-                            _logService.Info($"读取成功: {readRequests[i].Address} = {result.Data[i]}");
+                            for (int i = 0; i < result.Data.Length && i < validRows.Count; i++)
+                            {
+                                var row = validRows[i];
+                                row.Cells["columnValue"].Value = result.Data[i];
+                                row.Cells["columnResult"].Value = "成功";
+                                _logService.Info($"读取成功: {readRequests[i].Address} = {result.Data[i]}");
+                            }
+                            
+                            if (invalidCount > 0)
+                            {
+                                MessageBox.Show($"批量读取完成，成功 {readRequests.Count} 条，失败 {invalidCount} 条", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("批量读取完成，全部成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var row in validRows)
+                            {
+                                row.Cells["columnResult"].Value = $"失败: {result.Error.Message}";
+                            }
+                            _logService.Error("批量读取失败", null, result.Error.Message);
+                            MessageBox.Show($"批量读取失败: {result.Error.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                    else
+                    finally
                     {
-                        foreach (var row in validRows)
-                        {
-                            row.Cells["columnResult"].Value = $"失败: {result.Error.Message}";
-                        }
-                        _logService.Error("批量读取失败", null, result.Error.Message);
+                        // 重新启用按钮
+                        btnReadAll.Enabled = true;
+                        btnWriteAll.Enabled = true;
                     }
+                }
+                else
+                {
+                    MessageBox.Show("没有有效的读取请求", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 
                 _logService.Info("批量读取操作完成");
@@ -467,6 +521,10 @@ namespace MelsecPLCCommunicator.UI
             {
                 _logService.Error("批量读取操作异常", ex);
                 MessageBox.Show($"批量读取操作异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                // 确保按钮重新启用
+                btnReadAll.Enabled = true;
+                btnWriteAll.Enabled = true;
             }
         }
 
@@ -489,9 +547,9 @@ namespace MelsecPLCCommunicator.UI
                 // 收集所有写入请求
                 var writeRequests = new List<BatchWriteRequest>();
                 var validRows = new List<DataGridViewRow>();
+                int invalidCount = 0;
                 
                 // 先检查所有数据是否有效
-                bool allValid = true;
                 foreach (DataGridViewRow row in dataGridViewBatch.Rows)
                 {
                     if (!row.IsNewRow)
@@ -501,25 +559,42 @@ namespace MelsecPLCCommunicator.UI
                         object value = row.Cells["columnValue"].Value;
                         if (!string.IsNullOrEmpty(address) && !string.IsNullOrEmpty(dataType) && value != null)
                         {
-                            validRows.Add(row);
+                            try
+                            {
+                                var dataTypeEnum = StringToDataType(dataType);
+                                writeRequests.Add(new BatchWriteRequest
+                                {
+                                    Address = address,
+                                    DataType = dataTypeEnum,
+                                    Value = value
+                                });
+                                validRows.Add(row);
+                                row.Cells["columnResult"].Value = "写入中...";
+                            }
+                            catch (Exception ex)
+                            {
+                                row.Cells["columnResult"].Value = $"错误: {ex.Message}";
+                                _logService.Warning($"数据类型转换错误: {dataType}");
+                                invalidCount++;
+                            }
                         }
                         else
                         {
                             row.Cells["columnResult"].Value = "错误: 地址、数据类型或值为空";
                             _logService.Warning("地址、数据类型或值为空");
-                            allValid = false;
+                            invalidCount++;
                         }
                     }
                 }
                 
-                if (!allValid)
+                if (validRows.Count == 0)
                 {
-                    MessageBox.Show("部分数据行无效，请检查后重试", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("没有有效的写入请求", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
                 
                 // 写入确认
-                var dialogResult = MessageBox.Show($"确定要写入 {validRows.Count} 条数据吗？", "确认写入", MessageBoxButtons.OKCancel);
+                var dialogResult = MessageBox.Show($"确定要写入 {validRows.Count} 条数据吗？", "确认写入", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 if (dialogResult != DialogResult.OK)
                 {
                     foreach (var row in validRows)
@@ -530,40 +605,50 @@ namespace MelsecPLCCommunicator.UI
                     return;
                 }
                 
-                // 收集有效的写入请求
-                foreach (var row in validRows)
-                {
-                    string address = row.Cells["columnAddress"].Value?.ToString();
-                    string dataType = row.Cells["columnDataType"].Value?.ToString();
-                    object value = row.Cells["columnValue"].Value;
-                    
-                    writeRequests.Add(new BatchWriteRequest
-                    {
-                        Address = address,
-                        DataType = StringToDataType(dataType),
-                        Value = value
-                    });
-                }
-                
                 // 执行批量写入
                 if (writeRequests.Count > 0)
                 {
-                    var result = await _readWriteService.BatchWriteAsync(writeRequests.ToArray());
-                    if (result.Success)
+                    _logService.Info($"执行批量写入，共 {writeRequests.Count} 条数据");
+                    
+                    // 禁用按钮，防止重复操作
+                    btnReadAll.Enabled = false;
+                    btnWriteAll.Enabled = false;
+                    
+                    try
                     {
-                        foreach (var row in validRows)
+                        var result = await _readWriteService.BatchWriteAsync(writeRequests.ToArray());
+                        if (result.Success)
                         {
-                            row.Cells["columnResult"].Value = "成功";
+                            foreach (var row in validRows)
+                            {
+                                row.Cells["columnResult"].Value = "成功";
+                            }
+                            _logService.Info("批量写入成功");
+                            
+                            if (invalidCount > 0)
+                            {
+                                MessageBox.Show($"批量写入完成，成功 {validRows.Count} 条，失败 {invalidCount} 条", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("批量写入完成，全部成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
                         }
-                        _logService.Info("批量写入成功");
+                        else
+                        {
+                            foreach (var row in validRows)
+                            {
+                                row.Cells["columnResult"].Value = $"失败: {result.Error.Message}";
+                            }
+                            _logService.Error("批量写入失败", null, result.Error.Message);
+                            MessageBox.Show($"批量写入失败: {result.Error.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                    else
+                    finally
                     {
-                        foreach (var row in validRows)
-                        {
-                            row.Cells["columnResult"].Value = $"失败: {result.Error.Message}";
-                        }
-                        _logService.Error("批量写入失败", null, result.Error.Message);
+                        // 重新启用按钮
+                        btnReadAll.Enabled = true;
+                        btnWriteAll.Enabled = true;
                     }
                 }
                 
@@ -573,6 +658,10 @@ namespace MelsecPLCCommunicator.UI
             {
                 _logService.Error("批量写入操作异常", ex);
                 MessageBox.Show($"批量写入操作异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                // 确保按钮重新启用
+                btnReadAll.Enabled = true;
+                btnWriteAll.Enabled = true;
             }
         }
 
@@ -647,6 +736,10 @@ namespace MelsecPLCCommunicator.UI
 
             _logService.Debug("监控模式读取数据");
 
+            // 收集有效的读取请求
+            var readRequests = new List<BatchReadRequest>();
+            var validRows = new List<DataGridViewRow>();
+            
             foreach (DataGridViewRow row in dataGridViewBatch.Rows)
             {
                 if (!row.IsNewRow)
@@ -657,25 +750,56 @@ namespace MelsecPLCCommunicator.UI
                         string dataType = row.Cells["columnDataType"].Value?.ToString();
                         if (!string.IsNullOrEmpty(address) && !string.IsNullOrEmpty(dataType))
                         {
-                            var result = await _readWriteService.ReadAsync(address, StringToDataType(dataType), 1);
-                            if (result.Success)
+                            var dataTypeEnum = StringToDataType(dataType);
+                            readRequests.Add(new BatchReadRequest
                             {
-                                row.Cells["columnValue"].Value = result.Data;
-                                row.Cells["columnResult"].Value = "成功";
-                                _logService.Debug($"监控读取: {address} = {result.Data}");
-                            }
-                            else
-                            {
-                                row.Cells["columnResult"].Value = $"失败: {result.Error.Message}";
-                                _logService.Error($"监控读取失败: {address}", null, result.Error.Message);
-                            }
+                                Address = address,
+                                DataType = dataTypeEnum,
+                                Length = 1
+                            });
+                            validRows.Add(row);
                         }
                     }
                     catch (Exception ex)
                     {
                         row.Cells["columnResult"].Value = $"错误: {ex.Message}";
-                        _logService.Error("监控读取异常", ex);
+                        _logService.Warning("监控读取数据类型转换错误");
                     }
+                }
+            }
+            
+            // 执行批量读取
+            if (readRequests.Count > 0)
+            {
+                try
+                {
+                    var result = await _readWriteService.BatchReadAsync(readRequests.ToArray());
+                    if (result.Success)
+                    {
+                        for (int i = 0; i < result.Data.Length && i < validRows.Count; i++)
+                        {
+                            var row = validRows[i];
+                            row.Cells["columnValue"].Value = result.Data[i];
+                            row.Cells["columnResult"].Value = "成功";
+                            _logService.Debug($"监控读取: {readRequests[i].Address} = {result.Data[i]}");
+                        }
+                    }
+                    else
+                    {
+                        foreach (var row in validRows)
+                        {
+                            row.Cells["columnResult"].Value = $"失败: {result.Error.Message}";
+                        }
+                        _logService.Error("监控批量读取失败", null, result.Error.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    foreach (var row in validRows)
+                    {
+                        row.Cells["columnResult"].Value = $"错误: {ex.Message}";
+                    }
+                    _logService.Error("监控读取异常", ex);
                 }
             }
         }

@@ -126,17 +126,26 @@ namespace MelsecPLCCommunicator.UI.Forms
             string simplifiedProtocol = protocolType;
             switch (protocolType)
             {
-                case "MC Protocol (3E) - TCP":
-                    simplifiedProtocol = "MC3E-TCP";
+                case "MC Protocol (3E) - TCP (二进制)":
+                    simplifiedProtocol = "MC3E-TCP-Bin";
                     break;
-                case "MC Protocol (3E) - UDP":
-                    simplifiedProtocol = "MC3E-UDP";
+                case "MC Protocol (3E) - TCP (ASCII)":
+                    simplifiedProtocol = "MC3E-TCP-ASCII";
+                    break;
+                case "MC Protocol (3E) - UDP (二进制)":
+                    simplifiedProtocol = "MC3E-UDP-Bin";
+                    break;
+                case "MC Protocol (3E) - UDP (ASCII)":
+                    simplifiedProtocol = "MC3E-UDP-ASCII";
                     break;
                 case "MC Protocol (4E) - TCP":
                     simplifiedProtocol = "MC4E-TCP";
                     break;
-                case "MC Protocol (1E) - TCP":
-                    simplifiedProtocol = "MC1E-TCP";
+                case "MC Protocol (1E) - TCP (二进制)":
+                    simplifiedProtocol = "MC1E-TCP-Bin";
+                    break;
+                case "MC Protocol (1E) - TCP (ASCII)":
+                    simplifiedProtocol = "MC1E-TCP-ASCII";
                     break;
                 case "MC Protocol (1C) - 格式1/4":
                     simplifiedProtocol = "MC1C";
@@ -265,13 +274,13 @@ namespace MelsecPLCCommunicator.UI.Forms
                 switch (interfaceType)
                 {
                     case "以太网":
-                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP", "MC Protocol (3E) - UDP", "MC Protocol (4E) - TCP", "SLMP", "Modbus TCP", "Raw Socket" });
+                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP (二进制)", "MC Protocol (3E) - TCP (ASCII)", "MC Protocol (3E) - UDP (二进制)", "MC Protocol (3E) - UDP (ASCII)", "MC Protocol (4E) - TCP", "SLMP", "Modbus TCP", "Raw Socket" });
                         break;
                     case "串口 (模块)":
                         cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3C)", "MC Protocol (4C)", "Free Format", "Modbus RTU" });
                         break;
                     default:
-                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP");
+                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP (二进制)");
                         break;
                 }
             }
@@ -280,13 +289,13 @@ namespace MelsecPLCCommunicator.UI.Forms
                 switch (interfaceType)
                 {
                     case "以太网 (模块)":
-                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (1E) - TCP", "SLMP", "Modbus TCP", "Raw Socket" });
+                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (1E) - TCP (二进制)", "MC Protocol (1E) - TCP (ASCII)", "SLMP", "Modbus TCP", "Raw Socket" });
                         break;
                     case "串口 (内置/模块)":
                         cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (1C) - 格式1/4", "Free Format", "Modbus RTU" });
                         break;
                     default:
-                        cmbProtocolType.Items.Add("MC Protocol (1E) - TCP");
+                        cmbProtocolType.Items.Add("MC Protocol (1E) - TCP (二进制)");
                         break;
                 }
             }
@@ -295,13 +304,13 @@ namespace MelsecPLCCommunicator.UI.Forms
                 switch (interfaceType)
                 {
                     case "以太网 (内置/模块)":
-                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP", "SLMP", "Modbus TCP", "Raw Socket" });
+                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP (二进制)", "MC Protocol (3E) - TCP (ASCII)", "SLMP", "Modbus TCP", "Raw Socket" });
                         break;
                     case "串口 (内置/模块)":
                         cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3C)", "MC Protocol (4C)", "Free Format", "Modbus RTU" });
                         break;
                     default:
-                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP");
+                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP (二进制)");
                         break;
                 }
             }
@@ -310,13 +319,13 @@ namespace MelsecPLCCommunicator.UI.Forms
                 switch (interfaceType)
                 {
                     case "以太网":
-                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP", "MC Protocol (3E) - UDP", "SLMP", "Modbus TCP" });
+                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP (二进制)", "MC Protocol (3E) - TCP (ASCII)", "MC Protocol (3E) - UDP (二进制)", "MC Protocol (3E) - UDP (ASCII)", "SLMP", "Modbus TCP" });
                         break;
                     case "串口":
                         cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3C)", "MC Protocol (4C)", "Free Format", "Modbus RTU" });
                         break;
                     default:
-                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP");
+                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP (二进制)");
                         break;
                 }
             }
@@ -325,13 +334,13 @@ namespace MelsecPLCCommunicator.UI.Forms
                 switch (interfaceType)
                 {
                     case "以太网":
-                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP", "SLMP (兼容3E)", "Modbus TCP" });
+                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3E) - TCP (二进制)", "MC Protocol (3E) - TCP (ASCII)", "SLMP (兼容3E)", "Modbus TCP" });
                         break;
                     case "串口":
                         cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (3C)", "Free Format", "Modbus RTU" });
                         break;
                     default:
-                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP");
+                        cmbProtocolType.Items.Add("MC Protocol (3E) - TCP (二进制)");
                         break;
                 }
             }
@@ -342,7 +351,7 @@ namespace MelsecPLCCommunicator.UI.Forms
                 {
                     case "以太网":
                     case "以太网 (模块)":
-                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (1E) - TCP", "Modbus TCP" });
+                        cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (1E) - TCP (二进制)", "MC Protocol (1E) - TCP (ASCII)", "Modbus TCP" });
                         break;
                     case "串口":
                     case "串口 (内置/模块)":
@@ -350,7 +359,7 @@ namespace MelsecPLCCommunicator.UI.Forms
                         cmbProtocolType.Items.AddRange(new string[] { "MC Protocol (1C) - 格式1/4", "Free Format", "Modbus RTU" });
                         break;
                     default:
-                        cmbProtocolType.Items.Add("MC Protocol (1E) - TCP");
+                        cmbProtocolType.Items.Add("MC Protocol (1E) - TCP (二进制)");
                         break;
                 }
             }
@@ -477,9 +486,9 @@ namespace MelsecPLCCommunicator.UI.Forms
                 var config = new ConnectionConfigDto
                 {
                     ConnectionName = txtConnectionName?.Text ?? "PLC连接",
-                    PlcSeries = cmbPlcSeries?.SelectedItem?.ToString() ?? "FX",
+                    PlcSeries = cmbPlcSeries?.SelectedItem?.ToString() ?? "FX3",
                     InterfaceType = cmbInterfaceType?.SelectedItem?.ToString() ?? "以太网",
-                    ProtocolType = cmbProtocolType?.SelectedItem?.ToString() ?? "MC Protocol (3E) - TCP",
+                    ProtocolType = cmbProtocolType?.SelectedItem?.ToString() ?? "MC Protocol (3E) - TCP (二进制)",
                     PlcModel = "", // 移除了txtPlcModel控件
                     NetworkNumber = 0,
                     StationNumber = 0,
@@ -724,7 +733,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(30, 21);
             this.txtPort.TabIndex = 3;
-            this.txtPort.Text = "502";
+            this.txtPort.Text = "6000";
             // 
             // label6
             // 

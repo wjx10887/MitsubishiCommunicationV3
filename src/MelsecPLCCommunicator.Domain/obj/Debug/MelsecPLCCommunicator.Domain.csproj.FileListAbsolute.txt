@@ -9,3 +9,4 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Domain\obj\Debug\MelsecPLCCommunicator.Domain.csproj.CoreCompileInputs.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Domain\obj\Debug\MelsecPLCCommunicator.Domain.dll
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Domain\obj\Debug\MelsecPLCCommunicator.Domain.pdb
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Domain\obj\Debug\MelsecPLCCommunicator.Domain.sourcelink.json

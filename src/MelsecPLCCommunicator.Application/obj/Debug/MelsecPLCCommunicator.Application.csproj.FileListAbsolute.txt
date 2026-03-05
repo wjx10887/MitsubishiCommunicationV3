@@ -10,3 +10,4 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Application\obj\Debug\MelsecPL.FB267F0F.Up2Date
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Application\obj\Debug\MelsecPLCCommunicator.Application.dll
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Application\obj\Debug\MelsecPLCCommunicator.Application.pdb
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Application\obj\Debug\MelsecPLCCommunicator.Application.sourcelink.json

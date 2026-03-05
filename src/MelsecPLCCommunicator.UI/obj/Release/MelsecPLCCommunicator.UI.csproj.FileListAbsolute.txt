@@ -4,7 +4,6 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Release\
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.csproj.AssemblyReference.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.csproj.SuggestedBindingRedirects.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.exe.config
-D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.BatchOperationForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.ConnectionConfigForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.MainForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.csproj.GenerateResource.cache
@@ -15,3 +14,4 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPL.945E4CD1.Up2Date
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.exe
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.pdb
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.ConnectionMonitorForm.resources

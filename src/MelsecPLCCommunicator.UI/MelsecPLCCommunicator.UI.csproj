@@ -5,7 +5,7 @@
     <RootNamespace>MelsecPLCCommunicator.UI</RootNamespace>
     <AssemblyName>MelsecPLCCommunicator.UI</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   

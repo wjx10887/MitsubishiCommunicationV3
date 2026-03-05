@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MelsecPLCCommunicator.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+010a5ff994066ac857e02c3444e66532229fb596")]
 [assembly: System.Reflection.AssemblyProductAttribute("MelsecPLCCommunicator.UI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MelsecPLCCommunicator.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

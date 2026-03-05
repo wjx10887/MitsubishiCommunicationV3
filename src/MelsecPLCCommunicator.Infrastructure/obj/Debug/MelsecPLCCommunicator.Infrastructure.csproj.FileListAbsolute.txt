@@ -10,3 +10,4 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Debug\MelsecPL.DA8B041C.Up2Date
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Debug\MelsecPLCCommunicator.Infrastructure.dll
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Debug\MelsecPLCCommunicator.Infrastructure.pdb
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.Infrastructure\obj\Debug\MelsecPLCCommunicator.Infrastructure.sourcelink.json

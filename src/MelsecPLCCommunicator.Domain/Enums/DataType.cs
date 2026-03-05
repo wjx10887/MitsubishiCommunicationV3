@@ -13,6 +13,10 @@ namespace MelsecPLCCommunicator.Domain.Enums
         Y = 2, // 输出继电器
         L = 3, // 锁存继电器
         B = 4, // 位数据寄存器
+        TS = 5, // 定时器接点
+        CS = 6, // 计数器接点
+        TC = 7, // 定时器线圈
+        CC = 8, // 计数器线圈
         
         
         /// <summary>
@@ -31,7 +35,7 @@ namespace MelsecPLCCommunicator.Domain.Enums
         /// </summary>
         D32 = 20, // 双字数据寄存器
         Float = 21, // 单精度浮点数
-        F64 = 22 // 双精度浮点数
+        F64 = 23 // 双精度浮点数
 
 
     }

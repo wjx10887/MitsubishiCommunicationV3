@@ -18,3 +18,4 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.exe
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.pdb
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.ConnectionMonitorForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.sourcelink.json
