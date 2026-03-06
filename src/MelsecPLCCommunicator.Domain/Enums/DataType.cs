@@ -17,8 +17,7 @@ namespace MelsecPLCCommunicator.Domain.Enums
         CS = 6, // 计数器接点
         TC = 7, // 定时器线圈
         CC = 8, // 计数器线圈
-        
-        
+         
         /// <summary>
         /// 字数据
         /// </summary>
@@ -28,15 +27,11 @@ namespace MelsecPLCCommunicator.Domain.Enums
         ZR = 13, // 字数据寄存器
         T = 14, // 定时器
         C = 15, // 计数器
-
-        
         /// <summary>
         /// 双字数据
         /// </summary>
         D32 = 20, // 双字数据寄存器
         Float = 21, // 单精度浮点数
         F64 = 23 // 双精度浮点数
-
-
     }
 }
