@@ -164,6 +164,12 @@ namespace MelsecPLCCommunicator.Application.Services
                     }
                     
                     _logService.Info($"第 {i+1} 个请求读取成功: {results[i]}");
+                    
+                    // 对于UDP连接，添加适当的延迟，避免连续发送数据包导致超时
+                    if (i < readRequests.Length - 1)
+                    {
+                        await Task.Delay(50); // 50ms延迟
+                    }
                 }
 
                 _logService.Info("批量读取完成");

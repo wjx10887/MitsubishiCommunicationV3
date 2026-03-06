@@ -1,6 +1,7 @@
 using System;
 using HslCommunication;
 using HslCommunication.Profinet.Melsec;
+using HslCommunication.ModBus;
 
 namespace MelsecPLCCommunicator.Infrastructure.Adapters
 {
@@ -18,6 +19,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         private MelsecMcAsciiUdp _plcUdpAscii;
         private MelsecA1ENet _a1ePlc;
         private MelsecA1EAsciiNet _a1ePlcAscii;
+        private HslCommunication.ModBus.ModbusTcpNet _modbusTcp;
         private bool _isConnected;
         private HslCommunication.LogNet.ILogNet _logNet;
 
@@ -144,6 +146,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         // 使用3E帧协议，UDP二进制
                         _plcUdp = new MelsecMcUdp(_ipAddress, _port);
                         _plcUdp.LogNet = _logNet;
+                        _plcUdp.ReceiveTimeout = 5000; // 设置5秒超时
                         // UDP不需要连接，直接设置为已连接
                         _isConnected = true;
                         return _isConnected;
@@ -151,6 +154,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         // 使用3E帧协议，UDP ASCII
                         _plcUdpAscii = new MelsecMcAsciiUdp(_ipAddress, _port);
                         _plcUdpAscii.LogNet = _logNet;
+                        _plcUdpAscii.ReceiveTimeout = 5000; // 设置5秒超时
                         // UDP不需要连接，直接设置为已连接
                         _isConnected = true;
                         return _isConnected;
@@ -167,6 +171,13 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         _a1ePlcAscii.LogNet = _logNet;
                         var a1eAsciiResult = _a1ePlcAscii.ConnectServer();
                         _isConnected = a1eAsciiResult.IsSuccess;
+                        return _isConnected;
+                    case "Modbus TCP":
+                        // 使用Modbus TCP协议
+                        _modbusTcp = new ModbusTcpNet(_ipAddress, _port);
+                        _modbusTcp.LogNet = _logNet;
+                        var modbusResult = _modbusTcp.ConnectServer();
+                        _isConnected = modbusResult.IsSuccess;
                         return _isConnected;
                     default:
                         // 默认使用3E帧协议，TCP二进制
@@ -204,6 +215,10 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
             if (_a1ePlcAscii != null)
             {
                 _a1ePlcAscii.ConnectClose();
+            }
+            if (_modbusTcp != null)
+            {
+                _modbusTcp.ConnectClose();
             }
             _isConnected = false;
         }
@@ -246,6 +261,10 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
             {
                 return ReadData(_a1ePlcAscii, dataType, address, length);
             }
+            else if (_modbusTcp != null)
+            {
+                return ReadData(_modbusTcp, dataType, address, length);
+            }
             else
             {
                 throw new InvalidOperationException("设备未连接");
@@ -263,10 +282,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
@@ -282,23 +302,29 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return shortResult.Content;
                     }
                     throw new Exception(shortResult.Message);
-                case "DD":
-                case "D32":
-                    var intResult = plc.ReadInt32($"D{address}", length);
-                    if (intResult.IsSuccess)
+                case "TN": // 定时器当前值
+                case "CN": // 计数器当前值
+                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                    if (shortResultTC.IsSuccess)
                     {
-                        return intResult.Content;
+                        return shortResultTC.Content;
                     }
-                    throw new Exception(intResult.Message);
-                case "F":
+                    throw new Exception(shortResultTC.Message);
+                case "D32": // 32位整型
+                    var intResultD32 = plc.ReadInt32($"D{address}", length);
+                    if (intResultD32.IsSuccess)
+                    {
+                        return intResultD32.Content;
+                    }
+                    throw new Exception(intResultD32.Message);
+                case "Float": // 浮点数
                     var floatResult = plc.ReadFloat($"D{address}", length);
                     if (floatResult.IsSuccess)
                     {
                         return floatResult.Content;
                     }
                     throw new Exception(floatResult.Message);
-                case "DF":
-                case "F64":
+                case "DFloat": // 双精度浮点
                     var doubleResult = plc.ReadDouble($"D{address}", length);
                     if (doubleResult.IsSuccess)
                     {
@@ -321,10 +347,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
@@ -334,35 +361,22 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "D":
                 case "W":
                 case "R":
+                case "ZR": // 字数据寄存器
                     var shortResult = plc.ReadInt16($"{dataType}{address}", length);
                     if (shortResult.IsSuccess)
                     {
                         return shortResult.Content;
                     }
                     throw new Exception(shortResult.Message);
-                case "DD":
-                case "D32":
-                    var intResult = plc.ReadInt32($"D{address}", length);
-                    if (intResult.IsSuccess)
+                case "TN": // 定时器当前值
+                case "CN": // 计数器当前值
+                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                    if (shortResultTC.IsSuccess)
                     {
-                        return intResult.Content;
+                        return shortResultTC.Content;
                     }
-                    throw new Exception(intResult.Message);
-                case "F":
-                    var floatResult = plc.ReadFloat($"D{address}", length);
-                    if (floatResult.IsSuccess)
-                    {
-                        return floatResult.Content;
-                    }
-                    throw new Exception(floatResult.Message);
-                case "DF":
-                case "F64":
-                    var doubleResult = plc.ReadDouble($"D{address}", length);
-                    if (doubleResult.IsSuccess)
-                    {
-                        return doubleResult.Content;
-                    }
-                    throw new Exception(doubleResult.Message);
+                    throw new Exception(shortResultTC.Message);
+
                 default:
                     throw new NotSupportedException($"不支持的数据类型: {dataType}");
             }
@@ -379,10 +393,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
@@ -398,23 +413,29 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return shortResult.Content;
                     }
                     throw new Exception(shortResult.Message);
-                case "DD":
-                case "D32":
-                    var intResult = plc.ReadInt32($"D{address}", length);
-                    if (intResult.IsSuccess)
+                case "TN": // 定时器当前值
+                case "CN": // 计数器当前值
+                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                    if (shortResultTC.IsSuccess)
                     {
-                        return intResult.Content;
+                        return shortResultTC.Content;
                     }
-                    throw new Exception(intResult.Message);
-                case "F":
+                    throw new Exception(shortResultTC.Message);
+                case "D32": // 32位整型
+                    var intResultD32 = plc.ReadInt32($"D{address}", length);
+                    if (intResultD32.IsSuccess)
+                    {
+                        return intResultD32.Content;
+                    }
+                    throw new Exception(intResultD32.Message);
+                case "Float": // 浮点数
                     var floatResult = plc.ReadFloat($"D{address}", length);
                     if (floatResult.IsSuccess)
                     {
                         return floatResult.Content;
                     }
                     throw new Exception(floatResult.Message);
-                case "DF":
-                case "F64":
+                case "DFloat": // 双精度浮点
                     var doubleResult = plc.ReadDouble($"D{address}", length);
                     if (doubleResult.IsSuccess)
                     {
@@ -437,10 +458,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
@@ -456,23 +478,29 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return shortResult.Content;
                     }
                     throw new Exception(shortResult.Message);
-                case "DD":
-                case "D32":
-                    var intResult = plc.ReadInt32($"D{address}", length);
-                    if (intResult.IsSuccess)
+                case "TN": // 定时器当前值
+                case "CN": // 计数器当前值
+                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                    if (shortResultTC.IsSuccess)
                     {
-                        return intResult.Content;
+                        return shortResultTC.Content;
                     }
-                    throw new Exception(intResult.Message);
-                case "F":
+                    throw new Exception(shortResultTC.Message);
+                case "D32": // 32位整型
+                    var intResultD32 = plc.ReadInt32($"D{address}", length);
+                    if (intResultD32.IsSuccess)
+                    {
+                        return intResultD32.Content;
+                    }
+                    throw new Exception(intResultD32.Message);
+                case "Float": // 浮点数
                     var floatResult = plc.ReadFloat($"D{address}", length);
                     if (floatResult.IsSuccess)
                     {
                         return floatResult.Content;
                     }
                     throw new Exception(floatResult.Message);
-                case "DF":
-                case "F64":
+                case "DFloat": // 双精度浮点
                     var doubleResult = plc.ReadDouble($"D{address}", length);
                     if (doubleResult.IsSuccess)
                     {
@@ -495,10 +523,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
@@ -514,23 +543,29 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return shortResult.Content;
                     }
                     throw new Exception(shortResult.Message);
-                case "DD":
-                case "D32":
-                    var intResult = plc.ReadInt32($"D{address}", length);
-                    if (intResult.IsSuccess)
+                case "TN": // 定时器当前值
+                case "CN": // 计数器当前值
+                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                    if (shortResultTC.IsSuccess)
                     {
-                        return intResult.Content;
+                        return shortResultTC.Content;
                     }
-                    throw new Exception(intResult.Message);
-                case "F":
+                    throw new Exception(shortResultTC.Message);
+                case "D32": // 32位整型
+                    var intResultD32 = plc.ReadInt32($"D{address}", length);
+                    if (intResultD32.IsSuccess)
+                    {
+                        return intResultD32.Content;
+                    }
+                    throw new Exception(intResultD32.Message);
+                case "Float": // 浮点数
                     var floatResult = plc.ReadFloat($"D{address}", length);
                     if (floatResult.IsSuccess)
                     {
                         return floatResult.Content;
                     }
                     throw new Exception(floatResult.Message);
-                case "DF":
-                case "F64":
+                case "DFloat": // 双精度浮点
                     var doubleResult = plc.ReadDouble($"D{address}", length);
                     if (doubleResult.IsSuccess)
                     {
@@ -553,10 +588,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
@@ -572,23 +608,29 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return shortResult.Content;
                     }
                     throw new Exception(shortResult.Message);
-                case "DD":
-                case "D32":
-                    var intResult = plc.ReadInt32($"D{address}", length);
-                    if (intResult.IsSuccess)
+                case "TN": // 定时器当前值
+                case "CN": // 计数器当前值
+                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                    if (shortResultTC.IsSuccess)
                     {
-                        return intResult.Content;
+                        return shortResultTC.Content;
                     }
-                    throw new Exception(intResult.Message);
-                case "F":
+                    throw new Exception(shortResultTC.Message);
+                case "D32": // 32位整型
+                    var intResultD32 = plc.ReadInt32($"D{address}", length);
+                    if (intResultD32.IsSuccess)
+                    {
+                        return intResultD32.Content;
+                    }
+                    throw new Exception(intResultD32.Message);
+                case "Float": // 浮点数
                     var floatResult = plc.ReadFloat($"D{address}", length);
                     if (floatResult.IsSuccess)
                     {
                         return floatResult.Content;
                     }
                     throw new Exception(floatResult.Message);
-                case "DF":
-                case "F64":
+                case "DFloat": // 双精度浮点
                     var doubleResult = plc.ReadDouble($"D{address}", length);
                     if (doubleResult.IsSuccess)
                     {
@@ -640,6 +682,10 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 {
                     return WriteData(_a1ePlcAscii, dataType, address, value);
                 }
+                else if (_modbusTcp != null)
+                {
+                    return WriteData(_modbusTcp, dataType, address, value);
+                }
                 return false;
             }
             catch (Exception)
@@ -659,10 +705,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     if (value is bool boolValue)
                     {
                         var result = plc.Write($"{dataType}{address}", boolValue);
@@ -698,86 +745,112 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return result.IsSuccess;
                     }
                     break;
-                case "DD":
-                case "D32":
-                    if (value is int intValue2)
+                case "TN":
+                case "CN":
+                    if (value is short shortValue2)
                     {
-                        var result = plc.Write($"D{address}", intValue2);
+                        var result = plc.Write($"{dataType}{address}", shortValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is short shortValue2)
+                    else if (value is int intValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)shortValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)intValue2);
                         return result.IsSuccess;
                     }
                     else if (value is float floatValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)floatValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)floatValue2);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)doubleValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)doubleValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue2 && int.TryParse(stringValue2, out int parsedInt2))
+                    else if (value is string stringValue2 && short.TryParse(stringValue2, out short parsedShort2))
                     {
-                        var result = plc.Write($"D{address}", parsedInt2);
+                        var result = plc.Write($"{dataType}{address}", parsedShort2);
                         return result.IsSuccess;
                     }
                     break;
-                case "F":
-                    if (value is float floatValue3)
+                case "D32": // 32位整型
+                    if (value is int intValue3)
                     {
-                        var result = plc.Write($"D{address}", floatValue3);
-                        return result.IsSuccess;
-                    }
-                    else if (value is int intValue3)
-                    {
-                        var result = plc.Write($"D{address}", (float)intValue3);
+                        var result = plc.Write($"D{address}", intValue3);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)shortValue3);
+                        var result = plc.Write($"D{address}", (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write($"D{address}", (int)floatValue3);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)doubleValue3);
+                        var result = plc.Write($"D{address}", (int)doubleValue3);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue3 && float.TryParse(stringValue3, out float parsedFloat3))
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
                     {
-                        var result = plc.Write($"D{address}", parsedFloat3);
+                        var result = plc.Write($"D{address}", parsedInt3);
                         return result.IsSuccess;
                     }
                     break;
-                case "DF":
-                case "F64":
-                    if (value is double doubleValue4)
+                case "Float": // 浮点数
+                    if (value is float floatValue4)
                     {
-                        var result = plc.Write($"D{address}", doubleValue4);
-                        return result.IsSuccess;
-                    }
-                    else if (value is float floatValue4)
-                    {
-                        var result = plc.Write($"D{address}", (double)floatValue4);
+                        var result = plc.Write($"D{address}", floatValue4);
                         return result.IsSuccess;
                     }
                     else if (value is int intValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)intValue4);
+                        var result = plc.Write($"D{address}", (float)intValue4);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)shortValue4);
+                        var result = plc.Write($"D{address}", (float)shortValue4);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue4 && double.TryParse(stringValue4, out double parsedDouble4))
+                    else if (value is double doubleValue4)
                     {
-                        var result = plc.Write($"D{address}", parsedDouble4);
+                        var result = plc.Write($"D{address}", (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write($"D{address}", parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write($"D{address}", doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write($"D{address}", parsedDouble5);
                         return result.IsSuccess;
                     }
                     break;
@@ -796,10 +869,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     if (value is bool boolValue)
                     {
                         var result = plc.Write($"{dataType}{address}", boolValue);
@@ -835,86 +909,112 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return result.IsSuccess;
                     }
                     break;
-                case "DD":
-                case "D32":
-                    if (value is int intValue2)
+                case "TN":
+                case "CN":
+                    if (value is short shortValue2)
                     {
-                        var result = plc.Write($"D{address}", intValue2);
+                        var result = plc.Write($"{dataType}{address}", shortValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is short shortValue2)
+                    else if (value is int intValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)shortValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)intValue2);
                         return result.IsSuccess;
                     }
                     else if (value is float floatValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)floatValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)floatValue2);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)doubleValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)doubleValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue2 && int.TryParse(stringValue2, out int parsedInt2))
+                    else if (value is string stringValue2 && short.TryParse(stringValue2, out short parsedShort2))
                     {
-                        var result = plc.Write($"D{address}", parsedInt2);
+                        var result = plc.Write($"{dataType}{address}", parsedShort2);
                         return result.IsSuccess;
                     }
                     break;
-                case "F":
-                    if (value is float floatValue3)
+                case "D32": // 32位整型
+                    if (value is int intValue3)
                     {
-                        var result = plc.Write($"D{address}", floatValue3);
-                        return result.IsSuccess;
-                    }
-                    else if (value is int intValue3)
-                    {
-                        var result = plc.Write($"D{address}", (float)intValue3);
+                        var result = plc.Write($"D{address}", intValue3);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)shortValue3);
+                        var result = plc.Write($"D{address}", (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write($"D{address}", (int)floatValue3);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)doubleValue3);
+                        var result = plc.Write($"D{address}", (int)doubleValue3);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue3 && float.TryParse(stringValue3, out float parsedFloat3))
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
                     {
-                        var result = plc.Write($"D{address}", parsedFloat3);
+                        var result = plc.Write($"D{address}", parsedInt3);
                         return result.IsSuccess;
                     }
                     break;
-                case "DF":
-                case "F64":
-                    if (value is double doubleValue4)
+                case "Float": // 浮点数
+                    if (value is float floatValue4)
                     {
-                        var result = plc.Write($"D{address}", doubleValue4);
-                        return result.IsSuccess;
-                    }
-                    else if (value is float floatValue4)
-                    {
-                        var result = plc.Write($"D{address}", (double)floatValue4);
+                        var result = plc.Write($"D{address}", floatValue4);
                         return result.IsSuccess;
                     }
                     else if (value is int intValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)intValue4);
+                        var result = plc.Write($"D{address}", (float)intValue4);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)shortValue4);
+                        var result = plc.Write($"D{address}", (float)shortValue4);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue4 && double.TryParse(stringValue4, out double parsedDouble4))
+                    else if (value is double doubleValue4)
                     {
-                        var result = plc.Write($"D{address}", parsedDouble4);
+                        var result = plc.Write($"D{address}", (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write($"D{address}", parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write($"D{address}", doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write($"D{address}", parsedDouble5);
                         return result.IsSuccess;
                     }
                     break;
@@ -933,10 +1033,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     if (value is bool boolValue)
                     {
                         var result = plc.Write($"{dataType}{address}", boolValue);
@@ -972,86 +1073,112 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return result.IsSuccess;
                     }
                     break;
-                case "DD":
-                case "D32":
-                    if (value is int intValue2)
+                case "TN":
+                case "CN":
+                    if (value is short shortValue2)
                     {
-                        var result = plc.Write($"D{address}", intValue2);
+                        var result = plc.Write($"{dataType}{address}", shortValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is short shortValue2)
+                    else if (value is int intValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)shortValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)intValue2);
                         return result.IsSuccess;
                     }
                     else if (value is float floatValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)floatValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)floatValue2);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)doubleValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)doubleValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue2 && int.TryParse(stringValue2, out int parsedInt2))
+                    else if (value is string stringValue2 && short.TryParse(stringValue2, out short parsedShort2))
                     {
-                        var result = plc.Write($"D{address}", parsedInt2);
+                        var result = plc.Write($"{dataType}{address}", parsedShort2);
                         return result.IsSuccess;
                     }
                     break;
-                case "F":
-                    if (value is float floatValue3)
+                case "D32": // 32位整型
+                    if (value is int intValue3)
                     {
-                        var result = plc.Write($"D{address}", floatValue3);
-                        return result.IsSuccess;
-                    }
-                    else if (value is int intValue3)
-                    {
-                        var result = plc.Write($"D{address}", (float)intValue3);
+                        var result = plc.Write($"D{address}", intValue3);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)shortValue3);
+                        var result = plc.Write($"D{address}", (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write($"D{address}", (int)floatValue3);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)doubleValue3);
+                        var result = plc.Write($"D{address}", (int)doubleValue3);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue3 && float.TryParse(stringValue3, out float parsedFloat3))
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
                     {
-                        var result = plc.Write($"D{address}", parsedFloat3);
+                        var result = plc.Write($"D{address}", parsedInt3);
                         return result.IsSuccess;
                     }
                     break;
-                case "DF":
-                case "F64":
-                    if (value is double doubleValue4)
+                case "Float": // 浮点数
+                    if (value is float floatValue4)
                     {
-                        var result = plc.Write($"D{address}", doubleValue4);
-                        return result.IsSuccess;
-                    }
-                    else if (value is float floatValue4)
-                    {
-                        var result = plc.Write($"D{address}", (double)floatValue4);
+                        var result = plc.Write($"D{address}", floatValue4);
                         return result.IsSuccess;
                     }
                     else if (value is int intValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)intValue4);
+                        var result = plc.Write($"D{address}", (float)intValue4);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)shortValue4);
+                        var result = plc.Write($"D{address}", (float)shortValue4);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue4 && double.TryParse(stringValue4, out double parsedDouble4))
+                    else if (value is double doubleValue4)
                     {
-                        var result = plc.Write($"D{address}", parsedDouble4);
+                        var result = plc.Write($"D{address}", (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write($"D{address}", parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write($"D{address}", doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write($"D{address}", parsedDouble5);
                         return result.IsSuccess;
                     }
                     break;
@@ -1070,10 +1197,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     if (value is bool boolValue)
                     {
                         var result = plc.Write($"{dataType}{address}", boolValue);
@@ -1109,86 +1237,112 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return result.IsSuccess;
                     }
                     break;
-                case "DD":
-                case "D32":
-                    if (value is int intValue2)
+                case "TN":
+                case "CN":
+                    if (value is short shortValue2)
                     {
-                        var result = plc.Write($"D{address}", intValue2);
+                        var result = plc.Write($"{dataType}{address}", shortValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is short shortValue2)
+                    else if (value is int intValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)shortValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)intValue2);
                         return result.IsSuccess;
                     }
                     else if (value is float floatValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)floatValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)floatValue2);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)doubleValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)doubleValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue2 && int.TryParse(stringValue2, out int parsedInt2))
+                    else if (value is string stringValue2 && short.TryParse(stringValue2, out short parsedShort2))
                     {
-                        var result = plc.Write($"D{address}", parsedInt2);
+                        var result = plc.Write($"{dataType}{address}", parsedShort2);
                         return result.IsSuccess;
                     }
                     break;
-                case "F":
-                    if (value is float floatValue3)
+                case "D32": // 32位整型
+                    if (value is int intValue3)
                     {
-                        var result = plc.Write($"D{address}", floatValue3);
-                        return result.IsSuccess;
-                    }
-                    else if (value is int intValue3)
-                    {
-                        var result = plc.Write($"D{address}", (float)intValue3);
+                        var result = plc.Write($"D{address}", intValue3);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)shortValue3);
+                        var result = plc.Write($"D{address}", (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write($"D{address}", (int)floatValue3);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)doubleValue3);
+                        var result = plc.Write($"D{address}", (int)doubleValue3);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue3 && float.TryParse(stringValue3, out float parsedFloat3))
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
                     {
-                        var result = plc.Write($"D{address}", parsedFloat3);
+                        var result = plc.Write($"D{address}", parsedInt3);
                         return result.IsSuccess;
                     }
                     break;
-                case "DF":
-                case "F64":
-                    if (value is double doubleValue4)
+                case "Float": // 浮点数
+                    if (value is float floatValue4)
                     {
-                        var result = plc.Write($"D{address}", doubleValue4);
-                        return result.IsSuccess;
-                    }
-                    else if (value is float floatValue4)
-                    {
-                        var result = plc.Write($"D{address}", (double)floatValue4);
+                        var result = plc.Write($"D{address}", floatValue4);
                         return result.IsSuccess;
                     }
                     else if (value is int intValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)intValue4);
+                        var result = plc.Write($"D{address}", (float)intValue4);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)shortValue4);
+                        var result = plc.Write($"D{address}", (float)shortValue4);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue4 && double.TryParse(stringValue4, out double parsedDouble4))
+                    else if (value is double doubleValue4)
                     {
-                        var result = plc.Write($"D{address}", parsedDouble4);
+                        var result = plc.Write($"D{address}", (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write($"D{address}", parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write($"D{address}", doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write($"D{address}", parsedDouble5);
                         return result.IsSuccess;
                     }
                     break;
@@ -1207,10 +1361,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     if (value is bool boolValue)
                     {
                         var result = plc.Write($"{dataType}{address}", boolValue);
@@ -1246,86 +1401,112 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return result.IsSuccess;
                     }
                     break;
-                case "DD":
-                case "D32":
-                    if (value is int intValue2)
+                case "TN":
+                case "CN":
+                    if (value is short shortValue2)
                     {
-                        var result = plc.Write($"D{address}", intValue2);
+                        var result = plc.Write($"{dataType}{address}", shortValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is short shortValue2)
+                    else if (value is int intValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)shortValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)intValue2);
                         return result.IsSuccess;
                     }
                     else if (value is float floatValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)floatValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)floatValue2);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)doubleValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)doubleValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue2 && int.TryParse(stringValue2, out int parsedInt2))
+                    else if (value is string stringValue2 && short.TryParse(stringValue2, out short parsedShort2))
                     {
-                        var result = plc.Write($"D{address}", parsedInt2);
+                        var result = plc.Write($"{dataType}{address}", parsedShort2);
                         return result.IsSuccess;
                     }
                     break;
-                case "F":
-                    if (value is float floatValue3)
+                case "D32": // 32位整型
+                    if (value is int intValue3)
                     {
-                        var result = plc.Write($"D{address}", floatValue3);
-                        return result.IsSuccess;
-                    }
-                    else if (value is int intValue3)
-                    {
-                        var result = plc.Write($"D{address}", (float)intValue3);
+                        var result = plc.Write($"D{address}", intValue3);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)shortValue3);
+                        var result = plc.Write($"D{address}", (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write($"D{address}", (int)floatValue3);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)doubleValue3);
+                        var result = plc.Write($"D{address}", (int)doubleValue3);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue3 && float.TryParse(stringValue3, out float parsedFloat3))
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
                     {
-                        var result = plc.Write($"D{address}", parsedFloat3);
+                        var result = plc.Write($"D{address}", parsedInt3);
                         return result.IsSuccess;
                     }
                     break;
-                case "DF":
-                case "F64":
-                    if (value is double doubleValue4)
+                case "Float": // 浮点数
+                    if (value is float floatValue4)
                     {
-                        var result = plc.Write($"D{address}", doubleValue4);
-                        return result.IsSuccess;
-                    }
-                    else if (value is float floatValue4)
-                    {
-                        var result = plc.Write($"D{address}", (double)floatValue4);
+                        var result = plc.Write($"D{address}", floatValue4);
                         return result.IsSuccess;
                     }
                     else if (value is int intValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)intValue4);
+                        var result = plc.Write($"D{address}", (float)intValue4);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)shortValue4);
+                        var result = plc.Write($"D{address}", (float)shortValue4);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue4 && double.TryParse(stringValue4, out double parsedDouble4))
+                    else if (value is double doubleValue4)
                     {
-                        var result = plc.Write($"D{address}", parsedDouble4);
+                        var result = plc.Write($"D{address}", (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write($"D{address}", parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write($"D{address}", doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write($"D{address}", parsedDouble5);
                         return result.IsSuccess;
                     }
                     break;
@@ -1344,10 +1525,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "X":
                 case "Y":
                 case "L":
-                case "TS":
-                case "CS":
-                case "TC":
-                case "CC":
+                case "B":
+                case "S":
+                case "F":
+                case "T":
+                case "C":
                     if (value is bool boolValue)
                     {
                         var result = plc.Write($"{dataType}{address}", boolValue);
@@ -1383,86 +1565,313 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return result.IsSuccess;
                     }
                     break;
-                case "DD":
-                case "D32":
-                    if (value is int intValue2)
+                case "TN":
+                case "CN":
+                    if (value is short shortValue2)
                     {
-                        var result = plc.Write($"D{address}", intValue2);
+                        var result = plc.Write($"{dataType}{address}", shortValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is short shortValue2)
+                    else if (value is int intValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)shortValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)intValue2);
                         return result.IsSuccess;
                     }
                     else if (value is float floatValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)floatValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)floatValue2);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue2)
                     {
-                        var result = plc.Write($"D{address}", (int)doubleValue2);
+                        var result = plc.Write($"{dataType}{address}", (short)doubleValue2);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue2 && int.TryParse(stringValue2, out int parsedInt2))
+                    else if (value is string stringValue2 && short.TryParse(stringValue2, out short parsedShort2))
                     {
-                        var result = plc.Write($"D{address}", parsedInt2);
+                        var result = plc.Write($"{dataType}{address}", parsedShort2);
                         return result.IsSuccess;
                     }
                     break;
-                case "F":
-                    if (value is float floatValue3)
+                case "D32": // 32位整型
+                    if (value is int intValue3)
                     {
-                        var result = plc.Write($"D{address}", floatValue3);
-                        return result.IsSuccess;
-                    }
-                    else if (value is int intValue3)
-                    {
-                        var result = plc.Write($"D{address}", (float)intValue3);
+                        var result = plc.Write($"D{address}", intValue3);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)shortValue3);
+                        var result = plc.Write($"D{address}", (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write($"D{address}", (int)floatValue3);
                         return result.IsSuccess;
                     }
                     else if (value is double doubleValue3)
                     {
-                        var result = plc.Write($"D{address}", (float)doubleValue3);
+                        var result = plc.Write($"D{address}", (int)doubleValue3);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue3 && float.TryParse(stringValue3, out float parsedFloat3))
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
                     {
-                        var result = plc.Write($"D{address}", parsedFloat3);
+                        var result = plc.Write($"D{address}", parsedInt3);
                         return result.IsSuccess;
                     }
                     break;
-                case "DF":
-                case "F64":
-                    if (value is double doubleValue4)
+                case "Float": // 浮点数
+                    if (value is float floatValue4)
                     {
-                        var result = plc.Write($"D{address}", doubleValue4);
-                        return result.IsSuccess;
-                    }
-                    else if (value is float floatValue4)
-                    {
-                        var result = plc.Write($"D{address}", (double)floatValue4);
+                        var result = plc.Write($"D{address}", floatValue4);
                         return result.IsSuccess;
                     }
                     else if (value is int intValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)intValue4);
+                        var result = plc.Write($"D{address}", (float)intValue4);
                         return result.IsSuccess;
                     }
                     else if (value is short shortValue4)
                     {
-                        var result = plc.Write($"D{address}", (double)shortValue4);
+                        var result = plc.Write($"D{address}", (float)shortValue4);
                         return result.IsSuccess;
                     }
-                    else if (value is string stringValue4 && double.TryParse(stringValue4, out double parsedDouble4))
+                    else if (value is double doubleValue4)
                     {
-                        var result = plc.Write($"D{address}", parsedDouble4);
+                        var result = plc.Write($"D{address}", (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write($"D{address}", parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write($"D{address}", doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write($"D{address}", (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write($"D{address}", parsedDouble5);
+                        return result.IsSuccess;
+                    }
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 通用读取数据方法 - ModbusTcpNet
+        /// </summary>
+        private object ReadData(HslCommunication.ModBus.ModbusTcpNet plc, string dataType, string address, ushort length)
+        {
+            switch (dataType)
+            {
+                case "M": // 中间继电器 -> Modbus线圈
+                case "X": // 输入继电器 -> Modbus离散输入
+                case "Y": // 输出继电器 -> Modbus线圈
+                case "L": // 锁存继电器 -> Modbus线圈
+                case "B": // 连接继电器 -> Modbus线圈
+                case "S": // 状态继电器 -> Modbus线圈
+                case "F": // 报警器 -> Modbus线圈
+                case "T": // 定时器触点 -> Modbus线圈
+                case "C": // 计数器触点 -> Modbus线圈
+                    // 对于布尔类型，使用ReadCoil
+                    var boolResult = plc.ReadCoil(address, length);
+                    if (boolResult.IsSuccess)
+                    {
+                        return boolResult.Content;
+                    }
+                    throw new Exception(boolResult.Message);
+                case "D": // 数据寄存器 -> Modbus保持寄存器
+                case "W": // 链接寄存器 -> Modbus保持寄存器
+                case "R": // 文件寄存器 -> Modbus保持寄存器
+                case "TN": // 定时器当前值 -> Modbus保持寄存器
+                case "CN": // 计数器当前值 -> Modbus保持寄存器
+                    // 对于16位整数，使用ReadInt16
+                    var shortResult = plc.ReadInt16(address, length);
+                    if (shortResult.IsSuccess)
+                    {
+                        return shortResult.Content;
+                    }
+                    throw new Exception(shortResult.Message);
+                case "D32": // 32位整型 -> Modbus保持寄存器
+                    // 对于32位整数，使用ReadInt32
+                    var intResultD32 = plc.ReadInt32(address, length);
+                    if (intResultD32.IsSuccess)
+                    {
+                        return intResultD32.Content;
+                    }
+                    throw new Exception(intResultD32.Message);
+                case "Float": // 浮点数 -> Modbus保持寄存器
+                    // 对于浮点数，使用ReadFloat
+                    var floatResult = plc.ReadFloat(address, length);
+                    if (floatResult.IsSuccess)
+                    {
+                        return floatResult.Content;
+                    }
+                    throw new Exception(floatResult.Message);
+                case "DFloat": // 双精度浮点 -> Modbus保持寄存器
+                    // 对于双精度浮点数，使用ReadDouble
+                    var doubleResult = plc.ReadDouble(address, length);
+                    if (doubleResult.IsSuccess)
+                    {
+                        return doubleResult.Content;
+                    }
+                    throw new Exception(doubleResult.Message);
+                default:
+                    throw new NotSupportedException($"不支持的数据类型: {dataType}");
+            }
+        }
+
+        /// <summary>
+        /// 通用写入数据方法 - ModbusTcpNet
+        /// </summary>
+        private bool WriteData(HslCommunication.ModBus.ModbusTcpNet plc, string dataType, string address, object value)
+        {
+            switch (dataType)
+            {
+                case "M": // 中间继电器 -> Modbus线圈
+                case "Y": // 输出继电器 -> Modbus线圈
+                case "L": // 锁存继电器 -> Modbus线圈
+                case "B": // 连接继电器 -> Modbus线圈
+                case "S": // 状态继电器 -> Modbus线圈
+                case "F": // 报警器 -> Modbus线圈
+                case "T": // 定时器触点 -> Modbus线圈
+                case "C": // 计数器触点 -> Modbus线圈
+                    if (value is bool boolValue)
+                    {
+                        var result = plc.Write(address, boolValue);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "D": // 数据寄存器 -> Modbus保持寄存器
+                case "W": // 链接寄存器 -> Modbus保持寄存器
+                case "R": // 文件寄存器 -> Modbus保持寄存器
+                case "TN": // 定时器当前值 -> Modbus保持寄存器
+                case "CN": // 计数器当前值 -> Modbus保持寄存器
+                    if (value is short shortValue1)
+                    {
+                        var result = plc.Write(address, new short[] { shortValue1 });
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue1)
+                    {
+                        var result = plc.Write(address, new short[] { (short)intValue1 });
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue1)
+                    {
+                        var result = plc.Write(address, new short[] { (short)floatValue1 });
+                        return result.IsSuccess;
+                    }
+                    else if (value is double doubleValue1)
+                    {
+                        var result = plc.Write(address, new short[] { (short)doubleValue1 });
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue1 && short.TryParse(stringValue1, out short parsedShort1))
+                    {
+                        var result = plc.Write(address, new short[] { parsedShort1 });
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "D32": // 32位整型 -> Modbus保持寄存器
+                    if (value is int intValue3)
+                    {
+                        var result = plc.Write(address, intValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue3)
+                    {
+                        var result = plc.Write(address, (int)shortValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue3)
+                    {
+                        var result = plc.Write(address, (int)floatValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is double doubleValue3)
+                    {
+                        var result = plc.Write(address, (int)doubleValue3);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue3 && int.TryParse(stringValue3, out int parsedInt3))
+                    {
+                        var result = plc.Write(address, parsedInt3);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "Float": // 浮点数 -> Modbus保持寄存器
+                    if (value is float floatValue4)
+                    {
+                        var result = plc.Write(address, floatValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue4)
+                    {
+                        var result = plc.Write(address, (float)intValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue4)
+                    {
+                        var result = plc.Write(address, (float)shortValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is double doubleValue4)
+                    {
+                        var result = plc.Write(address, (float)doubleValue4);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue4 && float.TryParse(stringValue4, out float parsedFloat4))
+                    {
+                        var result = plc.Write(address, parsedFloat4);
+                        return result.IsSuccess;
+                    }
+                    break;
+                case "DFloat": // 双精度浮点 -> Modbus保持寄存器
+                    if (value is double doubleValue5)
+                    {
+                        var result = plc.Write(address, doubleValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is float floatValue5)
+                    {
+                        var result = plc.Write(address, (double)floatValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is int intValue5)
+                    {
+                        var result = plc.Write(address, (double)intValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is short shortValue5)
+                    {
+                        var result = plc.Write(address, (double)shortValue5);
+                        return result.IsSuccess;
+                    }
+                    else if (value is string stringValue5 && double.TryParse(stringValue5, out double parsedDouble5))
+                    {
+                        var result = plc.Write(address, parsedDouble5);
                         return result.IsSuccess;
                     }
                     break;

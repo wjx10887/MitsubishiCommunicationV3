@@ -50,11 +50,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <returns>通信适配器</returns>
         public ICommunicationAdapter CreateAdapter(string interfaceType, string protocolType, string ipAddress = null, int port = 0, string portName = null, int baudRate = 9600, string parity = "None", int dataBits = 8, int stopBits = 1)
         {
-            if (interfaceType == "PLC内置以太网" || interfaceType == "网络通信模块")
+            if (interfaceType == "以太网"||interfaceType == "以太网 (内置/模块)")
             {
                 return CreateNetworkAdapter(ipAddress, port, protocolType);
             }
-            else if (interfaceType == "PLC编程口RS422" || interfaceType == "串行通信模块")
+            else if (interfaceType == "串口"||interfaceType== "串口 (内置/模块)"||interfaceType== "串口 (模块)")
             {
                 return CreateSerialAdapter(portName, baudRate, parity, dataBits, stopBits, protocolType);
             }

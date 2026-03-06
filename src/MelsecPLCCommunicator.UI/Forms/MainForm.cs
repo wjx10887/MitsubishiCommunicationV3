@@ -63,11 +63,10 @@ namespace MelsecPLCCommunicator.UI
             InitializeBatchOperationUI();
 
             // 绑定事件
-            btnDisconnect.Click += BtnDisconnect_Click;
-            btnAddRow.Click += BtnAddRow_Click;
-            btnDeleteRow.Click += BtnDeleteRow_Click;
-            btnReadAll.Click += BtnReadAll_Click;
-            btnWriteAll.Click += BtnWriteAll_Click;
+            //btnDisconnect.Click += BtnDisconnect_Click;
+            //btnDeleteRow.Click += BtnDeleteRow_Click;
+            // btnReadAll.Click += BtnReadAll_Click; // 已在InitializeComponent中绑定
+            // btnWriteAll.Click += BtnWriteAll_Click; // 已在InitializeComponent中绑定
             checkBoxMonitor.CheckedChanged += CheckBoxMonitor_CheckedChanged;
             txtMonitorInterval.TextChanged += TxtMonitorInterval_TextChanged;
         
@@ -203,31 +202,26 @@ namespace MelsecPLCCommunicator.UI
                 switch (dataTypeStr?.ToUpper())
                 {
                     // 位数据类型
-                    case "X": return DataType.X; // 输入继电器
-                    case "Y": return DataType.Y; // 输出继电器
-                    case "M": return DataType.M; // 内部继电器
-                    case "L": return DataType.L; // 锁存继电器
-                    case "B": return DataType.B; // 位数据寄存器
-                    case "S": return DataType.M; // S类型映射到M类型（枚举中没有S类型）
-                    case "TS": return DataType.TS; // 定时器接点
-                    case "CS": return DataType.CS; // 计数器接点
-                    case "TC": return DataType.TC; // 定时器线圈
-                    case "CC": return DataType.CC; // 计数器线圈
-                    
-                    // 字数据类型
-                    case "D": return DataType.D; // 数据寄存器
-                    case "W": return DataType.W; // 特殊寄存器
-                    case "R": return DataType.R; // 文件寄存器
-                    case "ZR": return DataType.ZR; // 字数据寄存器
+                    case "X": return DataType.X; // 输入寄存器
+                    case "Y": return DataType.Y; // 输出寄存器
+                    case "M": return DataType.M; // 中间寄存器
+                    case "B": return DataType.B; // 连接继电器
+                    case "S": return DataType.S; // 状态寄存器
+                    case "F": return DataType.F; // 报警器
                     case "T": return DataType.T; // 定时器
                     case "C": return DataType.C; // 计数器
                     
+                    // 字数据类型
+                    case "D": return DataType.D; // 数据寄存器
+                    case "W": return DataType.W; // 链接寄存器
+                    case "R": return DataType.R; // 文件寄存器
+                    case "TN": return DataType.TN; // 定时器当前值
+                    case "CN": return DataType.CN; // 计数器当前值
+                    
                     // 双字数据类型
-                    case "D32": return DataType.D32; // 双字数据寄存器
-                    case "FLOAT": return DataType.Float; // 单精度浮点数
-                    case "F": return DataType.Float; // 单精度浮点数
-                    case "F64": return DataType.F64; // 双精度浮点数
-                    case "DF": return DataType.F64; // 双精度浮点数
+                    case "D32": return DataType.D32; // 32位整型
+                    case "FLOAT": return DataType.Float; // 浮点数
+                    case "DFLOAT": return DataType.DFloat; // 双精度浮点
                     
                     default: return DataType.M; // 默认返回M类型
                 }
@@ -255,6 +249,7 @@ namespace MelsecPLCCommunicator.UI
             // 初始化读写模式下拉框
             cmbReadWriteMode.Items.AddRange(new string[] { "离散模式", "连续模式" });
             cmbReadWriteMode.SelectedIndex = 0; // 默认离散模式
+            cmbReadWriteMode.SelectedIndexChanged += CmbReadWriteMode_SelectedIndexChanged;
 
             // 初始化数据数量DomainUpDown
             domainUpDownDataCount.Items.Clear();
@@ -265,7 +260,7 @@ namespace MelsecPLCCommunicator.UI
             domainUpDownDataCount.Text = "1"; // 默认1
 
             // 初始化数据类型下拉框
-            cmbDataType.Items.AddRange(new string[] { "X", "Y", "M", "L", "B", "S", "C", "T", "D", "R", "ZR", "D32", "Float", "F64" });
+            cmbDataType.Items.AddRange(new string[] { "X", "Y", "M", "B", "S", "F", "TS", "CS", "TC", "CC", "D", "W", "R", "TN", "CN", "D32", "Float", "DFloat" });
             if (cmbDataType.Items.Count > 0)
             {
                 cmbDataType.SelectedIndex = 0;
@@ -304,7 +299,7 @@ namespace MelsecPLCCommunicator.UI
             dataGridViewBatch.MultiSelect = false;
 
             // 初始化数据类型列
-            columnDataType.Items.AddRange(new string[] { "X", "Y", "M", "L", "B", "S", "C", "T", "D", "R", "ZR", "D32", "Float", "F64" });
+            columnDataType.Items.AddRange(new string[] { "X", "Y", "M", "B", "S", "F", "T", "C", "D", "W", "R", "TN", "CN", "D32", "Float", "DFloat" });
             columnDataType.Width = 80;
 
             // 初始化操作类型列
@@ -317,12 +312,25 @@ namespace MelsecPLCCommunicator.UI
             columnResult.Width = 120;
 
             // 绑定监控模式事件，用于控制读写按钮的可用性
-            checkBoxMonitor.CheckedChanged += CheckBoxMonitor_CheckedChanged;
+           // checkBoxMonitor.CheckedChanged += CheckBoxMonitor_CheckedChanged;
         }
 
         /// <summary>
         /// 添加行按钮点击事件
         /// </summary>
+        /// <summary>
+        /// 读写模式下拉框选择变化事件
+        /// </summary>
+        private void CmbReadWriteMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string readWriteMode = cmbReadWriteMode.SelectedItem?.ToString();
+            if (readWriteMode == "离散模式")
+            {
+                // 离散模式下，数据数量默认1
+                domainUpDownDataCount.Text = "1";
+            }
+        }
+
         private void BtnAddRow_Click(object sender, EventArgs e)
         {
             string dataType = cmbDataType.SelectedItem?.ToString();
@@ -339,8 +347,33 @@ namespace MelsecPLCCommunicator.UI
             string readWriteMode = cmbReadWriteMode.SelectedItem?.ToString();
             if (readWriteMode == "离散模式")
             {
-                // 离散模式：添加单行数据
-                dataGridViewBatch.Rows.Add(dataType, address, operationType, "", "");
+                // 检查是否已存在相同的行
+                bool isDuplicate = false;
+                foreach (DataGridViewRow row in dataGridViewBatch.Rows)
+                {
+                    if (!row.IsNewRow)
+                    {
+                        string rowDataType = row.Cells["columnDataType"].Value?.ToString();
+                        string rowAddress = row.Cells["columnAddress"].Value?.ToString();
+                        string rowOperationType = row.Cells["columnOperationType"].Value?.ToString();
+                        
+                        if (rowDataType == dataType && rowAddress == address && rowOperationType == operationType)
+                        {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!isDuplicate)
+                {
+                    // 离散模式：添加单行数据
+                    dataGridViewBatch.Rows.Add(dataType, address, operationType, "", "");
+                }
+                else
+                {
+                    MessageBox.Show("该数据行已存在，请勿重复添加", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             else if (readWriteMode == "连续模式")
             {
@@ -383,12 +416,68 @@ namespace MelsecPLCCommunicator.UI
                     addressIncrement = 4; // F64类型每次增加4
                 }
 
-                // 添加多行数据
+                // 检查并添加多行数据
+                List<string> newAddresses = new List<string>();
                 for (int i = 0; i < dataCount; i++)
                 {
                     int currentOffset = offset + (i * addressIncrement);
                     string currentAddress = $"{baseAddress}{currentOffset}";
-                    dataGridViewBatch.Rows.Add(dataType, currentAddress, operationType, "", "");
+                    newAddresses.Add(currentAddress);
+                }
+                
+                // 检查是否有重复
+                List<string> duplicateAddresses = new List<string>();
+                foreach (string currentAddress in newAddresses)
+                {
+                    foreach (DataGridViewRow row in dataGridViewBatch.Rows)
+                    {
+                        if (!row.IsNewRow)
+                        {
+                            string rowDataType = row.Cells["columnDataType"].Value?.ToString();
+                            string rowAddress = row.Cells["columnAddress"].Value?.ToString();
+                            string rowOperationType = row.Cells["columnOperationType"].Value?.ToString();
+                            
+                            if (rowDataType == dataType && rowAddress == currentAddress && rowOperationType == operationType)
+                            {
+                                duplicateAddresses.Add(currentAddress);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (duplicateAddresses.Count > 0)
+                {
+                    string message = duplicateAddresses.Count == newAddresses.Count 
+                        ? "所有数据行已存在，请勿重复添加" 
+                        : $"部分数据行已存在 ({string.Join(", ", duplicateAddresses)})，将添加剩余行";
+                    MessageBox.Show(message, "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                
+                // 添加不重复的行
+                foreach (string currentAddress in newAddresses)
+                {
+                    bool isDuplicate = false;
+                    foreach (DataGridViewRow row in dataGridViewBatch.Rows)
+                    {
+                        if (!row.IsNewRow)
+                        {
+                            string rowDataType = row.Cells["columnDataType"].Value?.ToString();
+                            string rowAddress = row.Cells["columnAddress"].Value?.ToString();
+                            string rowOperationType = row.Cells["columnOperationType"].Value?.ToString();
+                            
+                            if (rowDataType == dataType && rowAddress == currentAddress && rowOperationType == operationType)
+                            {
+                                isDuplicate = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!isDuplicate)
+                    {
+                        dataGridViewBatch.Rows.Add(dataType, currentAddress, operationType, "", "");
+                    }
                 }
             }
         }
@@ -479,9 +568,28 @@ namespace MelsecPLCCommunicator.UI
                             for (int i = 0; i < result.Data.Length && i < validRows.Count; i++)
                             {
                                 var row = validRows[i];
-                                row.Cells["columnValue"].Value = result.Data[i];
+                                var value = result.Data[i];
+                                // 格式化显示值
+                                if (value is Array array)
+                                {
+                                    if (array.Length == 1)
+                                    {
+                                        // 单个值，显示第一个元素
+                                        row.Cells["columnValue"].Value = array.GetValue(0);
+                                    }
+                                    else
+                                    {
+                                        // 多个值，显示为逗号分隔的字符串
+                                        row.Cells["columnValue"].Value = string.Join(", ", array.Cast<object>());
+                                    }
+                                }
+                                else
+                                {
+                                    // 非数组类型，直接显示
+                                    row.Cells["columnValue"].Value = value;
+                                }
                                 row.Cells["columnResult"].Value = "成功";
-                                _logService.Info($"读取成功: {readRequests[i].Address} = {result.Data[i]}");
+                                _logService.Info($"读取成功: {readRequests[i].Address} = {value}");
                             }
                             
                             if (invalidCount > 0)
