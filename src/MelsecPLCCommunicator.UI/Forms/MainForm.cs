@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using MelsecPLCCommunicator.Application.Interfaces;
+using MelsecPLCCommunicator.Application.Services;
 using MelsecPLCCommunicator.Domain.DTOs;
 using MelsecPLCCommunicator.Domain.Enums;
 using MelsecPLCCommunicator.Domain.Shared;
@@ -43,6 +44,12 @@ namespace MelsecPLCCommunicator.UI
             _serviceProvider = serviceProvider;
             InitializeComponent();
             InitializeUI();
+            
+            // 订阅日志服务的LogAdded事件
+            if (_logService is LogService logServiceImpl)
+            {
+                logServiceImpl.LogAdded += LogService_LogAdded;
+            }
         }
 
         /// <summary>
@@ -998,6 +1005,23 @@ namespace MelsecPLCCommunicator.UI
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             string logEntry = $"[{timestamp}] [{logType}] {message}\r\n";
             txtLog.AppendText(logEntry);
+            txtLog.ScrollToCaret();
+        }
+
+        /// <summary>
+        /// 处理日志添加事件
+        /// </summary>
+        /// <param name="sender">发送者</param>
+        /// <param name="logEntry">日志条目</param>
+        private void LogService_LogAdded(object sender, string logEntry)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<object, string>(LogService_LogAdded), sender, logEntry);
+                return;
+            }
+
+            txtLog.AppendText(logEntry + "\r\n");
             txtLog.ScrollToCaret();
         }
         

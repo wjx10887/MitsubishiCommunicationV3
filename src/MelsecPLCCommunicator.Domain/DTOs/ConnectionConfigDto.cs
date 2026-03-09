@@ -94,5 +94,15 @@ namespace MelsecPLCCommunicator.Domain.DTOs
         /// 重连间隔
         /// </summary>
         public int ReconnectInterval { get; set; }
+
+        /// <summary>
+        /// 本地IP地址
+        /// </summary>
+        public string LocalIpAddress { get; set; }
+
+        /// <summary>
+        /// 本地端口
+        /// </summary>
+        public int LocalPort { get; set; }
     }
 }

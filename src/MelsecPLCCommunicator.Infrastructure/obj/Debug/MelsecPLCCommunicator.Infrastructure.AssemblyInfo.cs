@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MelsecPLCCommunicator.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c43f112bef2610d9bb007003fbcbd7bc6e3ce5cd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+97dd4088db4b7f23a963f200ca11c540b10e2986")]
 [assembly: System.Reflection.AssemblyProductAttribute("MelsecPLCCommunicator.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MelsecPLCCommunicator.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

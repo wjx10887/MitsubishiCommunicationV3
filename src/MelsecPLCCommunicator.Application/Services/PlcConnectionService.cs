@@ -53,11 +53,14 @@ namespace MelsecPLCCommunicator.Application.Services
                     config.ProtocolType,
                     config.IpAddress,
                     config.Port,
+                    config.LocalIpAddress ?? "192.168.1.100",
+                    config.LocalPort > 0 ? config.LocalPort : 3000,
                     config.PortName,
                     config.BaudRate,
                     config.Parity,
                     config.DataBits,
-                    config.StopBits);
+                    config.StopBits,
+                    _logService);
                 
                 _logService.Debug("创建通信适配器成功");
                 
@@ -108,11 +111,14 @@ namespace MelsecPLCCommunicator.Application.Services
                     config.ProtocolType,
                     config.IpAddress,
                     config.Port,
+                    config.LocalIpAddress ?? "192.168.1.100",
+                    config.LocalPort > 0 ? config.LocalPort : 3000,
                     config.PortName,
                     config.BaudRate,
                     config.Parity,
                     config.DataBits,
-                    config.StopBits);
+                    config.StopBits,
+                    _logService);
                 
                 // 订阅通讯帧事件
                 _currentAdapter.FrameReceived += CurrentAdapter_FrameReceived;

@@ -2,10 +2,10 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.7.2": {
-      "HslCommunication/10.6.0": {
+      "HslCommunication/12.6.3": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
+          "Newtonsoft.Json": "13.0.1"
         },
         "compile": {
           "lib/net451/HslCommunication.dll": {
@@ -146,7 +146,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.7.2",
         "dependencies": {
-          "HslCommunication": "10.6.0",
+          "HslCommunication": "12.6.3",
           "MelsecPLCCommunicator.Domain": "1.0.0",
           "Newtonsoft.Json": "13.0.1"
         },
@@ -159,10 +159,10 @@
       }
     },
     ".NETFramework,Version=v4.7.2/win-x86": {
-      "HslCommunication/10.6.0": {
+      "HslCommunication/12.6.3": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
+          "Newtonsoft.Json": "13.0.1"
         },
         "compile": {
           "lib/net451/HslCommunication.dll": {
@@ -303,7 +303,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.7.2",
         "dependencies": {
-          "HslCommunication": "10.6.0",
+          "HslCommunication": "12.6.3",
           "MelsecPLCCommunicator.Domain": "1.0.0",
           "Newtonsoft.Json": "13.0.1"
         },
@@ -317,14 +317,14 @@
     }
   },
   "libraries": {
-    "HslCommunication/10.6.0": {
-      "sha512": "+lB1ACAsXuLLK9j07VZD4adQNppemXPchmNCNDF4QcA0UZjljOxYGKp3DY32LVActZFlZ/mEcNvFnOOk4otkxw==",
+    "HslCommunication/12.6.3": {
+      "sha512": "Vi5iGLcVBDxXo8SvFcpKgYGYxOCIurD4n3XHgmwqPvHNZO/xFcw0hX7MPHru//ckjOABRRZ7isK5m0kZMrVciw==",
       "type": "package",
-      "path": "hslcommunication/10.6.0",
+      "path": "hslcommunication/12.6.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "hslcommunication.10.6.0.nupkg.sha512",
+        "hslcommunication.12.6.3.nupkg.sha512",
         "hslcommunication.nuspec",
         "lib/net20/HslCommunication.dll",
         "lib/net20/HslCommunication.xml",
@@ -528,11 +528,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
+      "projectUniqueName": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
       "projectName": "MelsecPLCCommunicator.UI",
-      "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
+      "projectPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\obj\\",
+      "outputPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -551,8 +551,8 @@
             "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Application\\MelsecPLCCommunicator.Application.csproj": {
               "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Application\\MelsecPLCCommunicator.Application.csproj"
             },
-            "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
-              "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
+            "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
+              "projectPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
             },
             "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj": {
               "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj"

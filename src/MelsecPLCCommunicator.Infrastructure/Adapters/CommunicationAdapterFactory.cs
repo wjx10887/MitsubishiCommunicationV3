@@ -14,10 +14,13 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <param name="ipAddress">IP地址</param>
         /// <param name="port">端口</param>
         /// <param name="protocolType">协议类型</param>
+        /// <param name="localIpAddress">本地IP地址</param>
+        /// <param name="localPort">本地端口</param>
+        /// <param name="logService">日志服务</param>
         /// <returns>通信适配器</returns>
-        public ICommunicationAdapter CreateNetworkAdapter(string ipAddress, int port, string protocolType)
+        public ICommunicationAdapter CreateNetworkAdapter(string ipAddress, int port, string protocolType, string localIpAddress = "192.168.1.100", int localPort = 3000, object logService = null)
         {
-            return new NetworkCommunicationAdapter(ipAddress, port, protocolType);
+            return new NetworkCommunicationAdapter(ipAddress, port, protocolType, localIpAddress, localPort);
         }
 
         /// <summary>
@@ -42,17 +45,20 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <param name="protocolType">协议类型</param>
         /// <param name="ipAddress">IP地址</param>
         /// <param name="port">端口</param>
+        /// <param name="localIpAddress">本地IP地址</param>
+        /// <param name="localPort">本地端口</param>
         /// <param name="portName">串口名称</param>
         /// <param name="baudRate">波特率</param>
         /// <param name="parity">校验位</param>
         /// <param name="dataBits">数据位</param>
         /// <param name="stopBits">停止位</param>
+        /// <param name="logService">日志服务</param>
         /// <returns>通信适配器</returns>
-        public ICommunicationAdapter CreateAdapter(string interfaceType, string protocolType, string ipAddress = null, int port = 0, string portName = null, int baudRate = 9600, string parity = "None", int dataBits = 8, int stopBits = 1)
+        public ICommunicationAdapter CreateAdapter(string interfaceType, string protocolType, string ipAddress = null, int port = 0, string localIpAddress = "192.168.1.100", int localPort = 3000, string portName = null, int baudRate = 9600, string parity = "None", int dataBits = 8, int stopBits = 1, object logService = null)
         {
             if (interfaceType == "以太网"||interfaceType == "以太网 (内置/模块)")
             {
-                return CreateNetworkAdapter(ipAddress, port, protocolType);
+                return CreateNetworkAdapter(ipAddress, port, protocolType, localIpAddress, localPort, logService);
             }
             else if (interfaceType == "串口"||interfaceType== "串口 (内置/模块)"||interfaceType== "串口 (模块)")
             {

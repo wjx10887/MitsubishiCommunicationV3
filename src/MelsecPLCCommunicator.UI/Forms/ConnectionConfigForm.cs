@@ -15,6 +15,10 @@ namespace MelsecPLCCommunicator.UI.Forms
         private readonly IPlcConnectionService _connectionService;
         private ComboBox cmbPortName;
         private readonly ILogService _logService;
+        private TextBox txtPcIpAddress;
+        private Label label19;
+        private TextBox txtPcPort;
+        private Label label20;
 
         /// <summary>
         /// 连接配置
@@ -517,6 +521,13 @@ namespace MelsecPLCCommunicator.UI.Forms
                         
                         if (config.Port > 0)
                             txtPort.Text = config.Port.ToString();
+                        
+                        // 加载本地IP和端口
+                        if (!string.IsNullOrEmpty(config.LocalIpAddress))
+                            txtPcIpAddress.Text = config.LocalIpAddress;
+                        
+                        if (config.LocalPort > 0)
+                            txtPcPort.Text = config.LocalPort.ToString();
                     }
                     // 加载串口参数
                     else if (config.InterfaceType.Contains("串口"))
@@ -655,6 +666,17 @@ namespace MelsecPLCCommunicator.UI.Forms
                     else
                     {
                         config.Port = 6000;
+                    }
+                    
+                    // 本地IP和端口
+                    config.LocalIpAddress = txtPcIpAddress?.Text ?? "192.168.1.100";
+                    if (txtPcPort != null && int.TryParse(txtPcPort.Text, out int localPort))
+                    {
+                        config.LocalPort = localPort;
+                    }
+                    else
+                    {
+                        config.LocalPort = 3000;
                     }
                 }
                 // 串口参数
@@ -846,10 +868,18 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // groupBoxNetwork
             // 
+            this.txtPcIpAddress = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.txtPcPort = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.groupBoxNetwork.Controls.Add(this.txtPort);
             this.groupBoxNetwork.Controls.Add(this.label6);
             this.groupBoxNetwork.Controls.Add(this.txtIpAddress);
             this.groupBoxNetwork.Controls.Add(this.label5);
+            this.groupBoxNetwork.Controls.Add(this.txtPcIpAddress);
+            this.groupBoxNetwork.Controls.Add(this.label19);
+            this.groupBoxNetwork.Controls.Add(this.txtPcPort);
+            this.groupBoxNetwork.Controls.Add(this.label20);
             this.groupBoxNetwork.Location = new System.Drawing.Point(30, 420);
             this.groupBoxNetwork.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
             this.groupBoxNetwork.Name = "groupBoxNetwork";
@@ -896,6 +926,44 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.label5.Size = new System.Drawing.Size(133, 30);
             this.label5.TabIndex = 0;
             this.label5.Text = "IP地址：";
+            // 
+            // txtPcIpAddress
+            // 
+            this.txtPcIpAddress.Location = new System.Drawing.Point(275, 142);
+            this.txtPcIpAddress.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtPcIpAddress.Name = "txtPcIpAddress";
+            this.txtPcIpAddress.Size = new System.Drawing.Size(369, 42);
+            this.txtPcIpAddress.TabIndex = 4;
+            this.txtPcIpAddress.Text = "192.168.1.100";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(50, 150);
+            this.label19.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(163, 30);
+            this.label19.TabIndex = 5;
+            this.label19.Text = "本地IP：";
+            // 
+            // txtPcPort
+            // 
+            this.txtPcPort.Location = new System.Drawing.Point(775, 142);
+            this.txtPcPort.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtPcPort.Name = "txtPcPort";
+            this.txtPcPort.Size = new System.Drawing.Size(69, 42);
+            this.txtPcPort.TabIndex = 6;
+            this.txtPcPort.Text = "3000";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(675, 150);
+            this.label20.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(133, 30);
+            this.label20.TabIndex = 7;
+            this.label20.Text = "本地端口：";
             // 
             // groupBoxSerial
             // 

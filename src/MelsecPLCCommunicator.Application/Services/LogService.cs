@@ -14,6 +14,11 @@ namespace MelsecPLCCommunicator.Application.Services
         private readonly object _lock = new object();
 
         /// <summary>
+        /// 日志添加事件
+        /// </summary>
+        public event EventHandler<string> LogAdded;
+
+        /// <summary>
         /// 构造函数
         /// </summary>
         public LogService()
@@ -115,6 +120,9 @@ namespace MelsecPLCCommunicator.Application.Services
                     _logs.RemoveAt(0);
                 }
             }
+
+            // 触发日志添加事件
+            LogAdded?.Invoke(this, logEntry);
         }
     }
 }

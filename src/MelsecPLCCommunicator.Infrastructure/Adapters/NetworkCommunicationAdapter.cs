@@ -13,13 +13,15 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         private readonly string _ipAddress;
         private readonly int _port;
         private readonly string _protocolType;
+        private readonly string _localIpAddress;
+        private readonly int _localPort;
         private MelsecMcNet _plc;
         private MelsecMcAsciiNet _plcAscii;
         private MelsecMcUdp _plcUdp;
         private MelsecMcAsciiUdp _plcUdpAscii;
         private MelsecA1ENet _a1ePlc;
         private MelsecA1EAsciiNet _a1ePlcAscii;
-        private HslCommunication.ModBus.ModbusTcpNet _modbusTcp;
+        private ModbusTcpNet _modbusTcp;
         private bool _isConnected;
         private HslCommunication.LogNet.ILogNet _logNet;
 
@@ -34,11 +36,15 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <param name="ipAddress">IP地址</param>
         /// <param name="port">端口</param>
         /// <param name="protocolType">协议类型</param>
-        public NetworkCommunicationAdapter(string ipAddress, int port, string protocolType)
+        /// <param name="localIpAddress">本地IP地址</param>
+        /// <param name="localPort">本地端口</param>
+        public NetworkCommunicationAdapter(string ipAddress, int port, string protocolType, string localIpAddress = "192.168.1.100", int localPort = 3000)
         {
             _ipAddress = ipAddress;
             _port = port;
             _protocolType = protocolType;
+            _localIpAddress = localIpAddress;
+            _localPort = localPort;
             _isConnected = false;
             InitializeLog();
         }
@@ -64,7 +70,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// </summary>
         /// <param name="sender">发送者</param>
         /// <param name="e">事件参数</param>
-        private void LogNet_BeforeSaveToFile(object sender, System.EventArgs e)
+        private void LogNet_BeforeSaveToFile(object sender, EventArgs e)
         {
             try
             {
@@ -132,6 +138,45 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         // 使用3E帧协议，TCP二进制
                         _plc = new MelsecMcNet(_ipAddress, _port);
                         _plc.LogNet = _logNet;
+                        // 设置本地IP和端口
+                        try
+                        {
+                            // 验证本地IP地址格式
+                            if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                            {
+                                // 验证端口范围
+                                if (_localPort >= 1 && _localPort <= 65535)
+                                {
+                                    // 尝试设置本地绑定
+                                    try
+                                    {
+                                        var localBindingField = _plc.GetType().GetField("localBinding", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                        if (localBindingField != null)
+                                        {
+                                            localBindingField.SetValue(_plc, new System.Net.IPEndPoint(localIp, _localPort));
+                                        }
+                                    }
+                                    catch (Exception socketEx)
+                                    {
+                                        _logNet?.WriteException("设置TCP本地绑定失败", socketEx);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                    _logNet?.WriteException("TCP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                }
+                            }
+                            else
+                            {
+                                var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                _logNet?.WriteException("TCP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logNet?.WriteException("设置TCP本地绑定失败", ex);
+                        }
                         var result = _plc.ConnectServer();
                         _isConnected = result.IsSuccess;
                         return _isConnected;
@@ -144,19 +189,117 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         return _isConnected;
                     case "MC Protocol (3E) - UDP (二进制)":
                         // 使用3E帧协议，UDP二进制
+                        // 每次连接时重新创建UDP实例，避免端口冲突
+                        _plcUdp = null;
                         _plcUdp = new MelsecMcUdp(_ipAddress, _port);
                         _plcUdp.LogNet = _logNet;
-                        _plcUdp.ReceiveTimeout = 5000; // 设置5秒超时
-                        // UDP不需要连接，直接设置为已连接
-                        _isConnected = true;
+                        // 设置本地IP和端口
+                        try
+                        {
+                            // 验证本地IP地址格式
+                            if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                            {
+                                // 验证端口范围
+                                if (_localPort >= 1 && _localPort <= 65535)
+                                {
+                                    _plcUdp.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
+                                    // 尝试设置套接字选项，允许端口重用
+                                    try
+                                    {
+                                        var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                        if (socketField != null)
+                                        {
+                                            var socket = socketField.GetValue(_plcUdp) as System.Net.Sockets.Socket;
+                                            if (socket != null)
+                                            {
+                                                socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                            }
+                                        }
+                                    }
+                                    catch (Exception socketEx)
+                                    {
+                                        _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                    _logNet?.WriteException("UDP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                }
+                            }
+                            else
+                            {
+                                var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                _logNet?.WriteException("UDP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logNet?.WriteException("设置UDP本地绑定失败", ex);
+                            // _logService?.Error("设置UDP本地绑定失败", ex);
+                        }
+                        // UDP不需要显式连接，直接设置为已连接
+                        // 尝试连接远程的服务器，如果连接成功，就切换短连接模式到长连接模式，
+                        // 后面的每次请求都共享一个通道，使得通讯速度更快速
+                        OperateResult udpResult = _plcUdp.ConnectServer();
+                        _isConnected = udpResult.IsSuccess;
                         return _isConnected;
                     case "MC Protocol (3E) - UDP (ASCII)":
                         // 使用3E帧协议，UDP ASCII
+                        // 每次连接时重新创建UDP实例，避免端口冲突
+                        _plcUdpAscii = null;
                         _plcUdpAscii = new MelsecMcAsciiUdp(_ipAddress, _port);
                         _plcUdpAscii.LogNet = _logNet;
-                        _plcUdpAscii.ReceiveTimeout = 5000; // 设置5秒超时
-                        // UDP不需要连接，直接设置为已连接
-                        _isConnected = true;
+                        // 设置本地IP和端口
+                        try
+                        {
+                            // 验证本地IP地址格式
+                            if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                            {
+                                // 验证端口范围
+                                if (_localPort >= 1 && _localPort <= 65535)
+                                {
+                                    _plcUdpAscii.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
+                                    // 尝试设置套接字选项，允许端口重用
+                                    try
+                                    {
+                                        var socketField = _plcUdpAscii.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                        if (socketField != null)
+                                        {
+                                            var socket = socketField.GetValue(_plcUdpAscii) as System.Net.Sockets.Socket;
+                                            if (socket != null)
+                                            {
+                                                socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                            }
+                                        }
+                                    }
+                                    catch (Exception socketEx)
+                                    {
+                                        _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                    _logNet?.WriteException("UDP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                }
+                            }
+                            else
+                            {
+                                var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                _logNet?.WriteException("UDP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logNet?.WriteException("设置UDP本地绑定失败", ex);
+                            // _logService?.Error("设置UDP本地绑定失败", ex);
+                        }
+                        // UDP不需要显式连接，直接设置为已连接
+                        // 尝试连接远程的服务器，如果连接成功，就切换短连接模式到长连接模式，
+                        // 后面的每次请求都共享一个通道，使得通讯速度更快速
+                        OperateResult udpAsciiResult = _plcUdpAscii.ConnectServer();
+                        _isConnected = udpAsciiResult.IsSuccess;
                         return _isConnected;
                     case "MC Protocol (1E) - TCP (二进制)":
                         // 使用1E帧协议，二进制
@@ -199,26 +342,22 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// </summary>
         public void Disconnect()
         {
-            if (_plc != null)
-            {
-                _plc.ConnectClose();
-            }
-            if (_plcAscii != null)
-            {
-                _plcAscii.ConnectClose();
-            }
+            _plc?.ConnectClose();
+            _plcAscii?.ConnectClose();
             // UDP不需要断开连接
-            if (_a1ePlc != null)
+            _a1ePlc?.ConnectClose();
+            _a1ePlcAscii?.ConnectClose();
+            _modbusTcp?.ConnectClose();
+                    // 释放UDP连接
+            if (_plcUdp != null)
             {
-                _a1ePlc.ConnectClose();
+                // UDP 实例无需显式 Dispose，置空即可
+                _plcUdp = null; 
             }
-            if (_a1ePlcAscii != null)
+            if (_plcUdpAscii != null)
             {
-                _a1ePlcAscii.ConnectClose();
-            }
-            if (_modbusTcp != null)
-            {
-                _modbusTcp.ConnectClose();
+                // UDP 实例无需显式 Dispose，置空即可
+                _plcUdpAscii = null;
             }
             _isConnected = false;
         }
@@ -247,11 +386,161 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
             }
             else if (_plcUdp != null)
             {
-                return ReadData(_plcUdp, dataType, address, length);
+                for (int retry = 0; retry < 3; retry++)
+                {
+                    try
+                    {
+                        return ReadData(_plcUdp, dataType, address, length);
+                    }
+                    catch (Exception ex)
+                    {
+                        // 如果是套接字地址错误，重新创建UDP实例
+                        if (ex.Message.Contains("套接字地址") || ex.Message.Contains("socket address") || ex.Message.Contains("只允许使用一次") || ex.Message.Contains("通常每个套接字地址"))
+                        {
+                            _logNet?.WriteException($"UDP连接错误，重新创建实例 (尝试 {retry + 1}/3)", ex);
+                            // 重新创建UDP实例
+                            _plcUdp = null;
+                            System.Threading.Thread.Sleep(100); // 短暂延迟，让操作系统有时间释放端口
+                            _plcUdp = new MelsecMcUdp(_ipAddress, _port);
+                            _plcUdp.LogNet = _logNet;
+                            try
+                            {
+                                // 验证本地IP地址格式
+                                if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                                {
+                                    // 验证端口范围
+                                    if (_localPort >= 1 && _localPort <= 65535)
+                                    {
+                                        _plcUdp.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
+                                        // 尝试设置套接字选项，允许端口重用
+                                        try
+                                        {
+                                            var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                            if (socketField != null)
+                                            {
+                                                var socket = socketField.GetValue(_plcUdp) as System.Net.Sockets.Socket;
+                                                if (socket != null)
+                                                {
+                                                    socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                                }
+                                            }
+                                        }
+                                        catch (Exception socketEx)
+                                        {
+                                            _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                            // _logService?.Error("设置套接字选项失败", socketEx);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                        _logNet?.WriteException("UDP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                        // _logService?.Error("UDP本地端口无效，使用默认端口", null, errorMsg);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                    _logNet?.WriteException("UDP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                                    // _logService?.Error("UDP本地IP地址格式无效，不设置本地绑定", null, errorMsg);
+                                }
+                            }
+                            catch (Exception bindEx)
+                        {
+                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                        }
+                            // 如果是最后一次尝试，直接抛出异常
+                            if (retry == 2)
+                            {
+                                throw;
+                            }
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+                throw new Exception("UDP读取失败，已达到最大重试次数");
             }
             else if (_plcUdpAscii != null)
             {
-                return ReadData(_plcUdpAscii, dataType, address, length);
+                for (int retry = 0; retry < 3; retry++)
+                {
+                    try
+                    {
+                        return ReadData(_plcUdpAscii, dataType, address, length);
+                    }
+                    catch (Exception ex)
+                    {
+                        // 如果是套接字地址错误，重新创建UDP实例
+                        if (ex.Message.Contains("套接字地址") || ex.Message.Contains("socket address") || ex.Message.Contains("只允许使用一次") || ex.Message.Contains("通常每个套接字地址"))
+                        {
+                            _logNet?.WriteException($"UDP连接错误，重新创建实例 (尝试 {retry + 1}/3)", ex);
+                            // 重新创建UDP实例
+                            _plcUdpAscii = null;
+                            System.Threading.Thread.Sleep(100); // 短暂延迟，让操作系统有时间释放端口
+                            _plcUdpAscii = new MelsecMcAsciiUdp(_ipAddress, _port);
+                            _plcUdpAscii.LogNet = _logNet;
+                            try
+                            {
+                                // 验证本地IP地址格式
+                                if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                                {
+                                    // 验证端口范围
+                                    if (_localPort >= 1 && _localPort <= 65535)
+                                    {
+                                        _plcUdpAscii.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
+                                        // 尝试设置套接字选项，允许端口重用
+                                        try
+                                        {
+                                            var socketField = _plcUdpAscii.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                            if (socketField != null)
+                                            {
+                                                var socket = socketField.GetValue(_plcUdpAscii) as System.Net.Sockets.Socket;
+                                                if (socket != null)
+                                                {
+                                                    socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                                }
+                                            }
+                                        }
+                                        catch (Exception socketEx)
+                                        {
+                                            _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                            // _logService?.Error("设置套接字选项失败", socketEx);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                        _logNet?.WriteException("UDP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                        // _logService?.Error("UDP本地端口无效，使用默认端口", null, errorMsg);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                    _logNet?.WriteException("UDP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                                    // _logService?.Error("UDP本地IP地址格式无效，不设置本地绑定", null, errorMsg);
+                                }
+                            }
+                            catch (Exception bindEx)
+                        {
+                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                        }
+                            // 如果是最后一次尝试，直接抛出异常
+                            if (retry == 2)
+                            {
+                                throw;
+                            }
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+                throw new Exception("UDP读取失败，已达到最大重试次数");
             }
             else if (_a1ePlc != null)
             {
@@ -387,63 +676,90 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// </summary>
         private object ReadData(MelsecMcUdp plc, string dataType, string address, ushort length)
         {
-            switch (dataType)
+            try
             {
-                case "M":
-                case "X":
-                case "Y":
-                case "L":
-                case "B":
-                case "S":
-                case "F":
-                case "T":
-                case "C":
-                    var boolResult = plc.ReadBool($"{dataType}{address}", length);
-                    if (boolResult.IsSuccess)
-                    {
-                        return boolResult.Content;
-                    }
-                    throw new Exception(boolResult.Message);
-                case "D":
-                case "W":
-                case "R":
-                    var shortResult = plc.ReadInt16($"{dataType}{address}", length);
-                    if (shortResult.IsSuccess)
-                    {
-                        return shortResult.Content;
-                    }
-                    throw new Exception(shortResult.Message);
-                case "TN": // 定时器当前值
-                case "CN": // 计数器当前值
-                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
-                    if (shortResultTC.IsSuccess)
-                    {
-                        return shortResultTC.Content;
-                    }
-                    throw new Exception(shortResultTC.Message);
-                case "D32": // 32位整型
-                    var intResultD32 = plc.ReadInt32($"D{address}", length);
-                    if (intResultD32.IsSuccess)
-                    {
-                        return intResultD32.Content;
-                    }
-                    throw new Exception(intResultD32.Message);
-                case "Float": // 浮点数
-                    var floatResult = plc.ReadFloat($"D{address}", length);
-                    if (floatResult.IsSuccess)
-                    {
-                        return floatResult.Content;
-                    }
-                    throw new Exception(floatResult.Message);
-                case "DFloat": // 双精度浮点
-                    var doubleResult = plc.ReadDouble($"D{address}", length);
-                    if (doubleResult.IsSuccess)
-                    {
-                        return doubleResult.Content;
-                    }
-                    throw new Exception(doubleResult.Message);
-                default:
-                    throw new NotSupportedException($"不支持的数据类型: {dataType}");
+                _logNet?.WriteInfo($"UDP读取数据: 类型={dataType}, 地址={address}, 长度={length}");
+                switch (dataType)
+                {
+                    case "M":
+                    case "X":
+                    case "Y":
+                    case "L":
+                    case "B":
+                    case "S":
+                    case "F":
+                    case "T":
+                    case "C":
+                        var boolResult = plc.ReadBool($"{dataType}{address}", length);
+                        if (boolResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取布尔值成功: {boolResult.Content}");
+                            return boolResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取布尔值失败: {boolResult.Message}");
+                        throw new Exception(boolResult.Message);
+                    case "D":
+                    case "W":
+                    case "R":
+                        var shortResult = plc.ReadInt16($"{dataType}{address}", length);
+                        if (shortResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取短整型成功: {shortResult.Content}");
+                            return shortResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取短整型失败: {shortResult.Message}");
+                        throw new Exception(shortResult.Message);
+                    case "TN": // 定时器当前值
+                    case "CN": // 计数器当前值
+                        var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                        if (shortResultTC.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取定时器/计数器成功: {shortResultTC.Content}");
+                            return shortResultTC.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取定时器/计数器失败: {shortResultTC.Message}");
+                        throw new Exception(shortResultTC.Message);
+                    case "D32": // 32位整型
+                        var intResultD32 = plc.ReadInt32($"D{address}", length);
+                        if (intResultD32.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取32位整型成功: {intResultD32.Content}");
+                            return intResultD32.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取32位整型失败: {intResultD32.Message}");
+                        throw new Exception(intResultD32.Message);
+                    case "Float": // 浮点数
+                        var floatResult = plc.ReadFloat($"D{address}", length);
+                        if (floatResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取浮点数成功: {floatResult.Content}");
+                            return floatResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取浮点数失败: {floatResult.Message}");
+                        // _logService?.Error($"UDP读取浮点数失败: {floatResult.Message}");
+                        throw new Exception(floatResult.Message);
+                    case "DFloat": // 双精度浮点
+                        var doubleResult = plc.ReadDouble($"D{address}", length);
+                        if (doubleResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取双精度浮点成功: {doubleResult.Content}");
+                            // _logService?.Info($"UDP读取双精度浮点成功: {doubleResult.Content}");
+                            return doubleResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取双精度浮点失败: {doubleResult.Message}");
+                        // _logService?.Error($"UDP读取双精度浮点失败: {doubleResult.Message}");
+                        throw new Exception(doubleResult.Message);
+                    default:
+                        var errorMsg = $"不支持的数据类型: {dataType}";
+                        // _logService?.Error(errorMsg);
+                        throw new NotSupportedException(errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logNet?.WriteException($"UDP读取数据异常: 类型={dataType}, 地址={address}, 长度={length}", ex);
+                // _logService?.Error($"UDP读取数据异常: 类型={dataType}, 地址={address}, 长度={length}", ex);
+                throw;
             }
         }
 
@@ -452,63 +768,100 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// </summary>
         private object ReadData(MelsecMcAsciiUdp plc, string dataType, string address, ushort length)
         {
-            switch (dataType)
+            try
             {
-                case "M":
-                case "X":
-                case "Y":
-                case "L":
-                case "B":
-                case "S":
-                case "F":
-                case "T":
-                case "C":
-                    var boolResult = plc.ReadBool($"{dataType}{address}", length);
-                    if (boolResult.IsSuccess)
-                    {
-                        return boolResult.Content;
-                    }
-                    throw new Exception(boolResult.Message);
-                case "D":
-                case "W":
-                case "R":
-                    var shortResult = plc.ReadInt16($"{dataType}{address}", length);
-                    if (shortResult.IsSuccess)
-                    {
-                        return shortResult.Content;
-                    }
-                    throw new Exception(shortResult.Message);
-                case "TN": // 定时器当前值
-                case "CN": // 计数器当前值
-                    var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
-                    if (shortResultTC.IsSuccess)
-                    {
-                        return shortResultTC.Content;
-                    }
-                    throw new Exception(shortResultTC.Message);
-                case "D32": // 32位整型
-                    var intResultD32 = plc.ReadInt32($"D{address}", length);
-                    if (intResultD32.IsSuccess)
-                    {
-                        return intResultD32.Content;
-                    }
-                    throw new Exception(intResultD32.Message);
-                case "Float": // 浮点数
-                    var floatResult = plc.ReadFloat($"D{address}", length);
-                    if (floatResult.IsSuccess)
-                    {
-                        return floatResult.Content;
-                    }
-                    throw new Exception(floatResult.Message);
-                case "DFloat": // 双精度浮点
-                    var doubleResult = plc.ReadDouble($"D{address}", length);
-                    if (doubleResult.IsSuccess)
-                    {
-                        return doubleResult.Content;
-                    }
-                    throw new Exception(doubleResult.Message);
-                default:
-                    throw new NotSupportedException($"不支持的数据类型: {dataType}");
+                _logNet?.WriteInfo($"UDP ASCII读取数据: 类型={dataType}, 地址={address}, 长度={length}");
+                // _logService?.Info($"UDP ASCII读取数据: 类型={dataType}, 地址={address}, 长度={length}");
+                switch (dataType)
+                {
+                    case "M":
+                    case "X":
+                    case "Y":
+                    case "L":
+                    case "B":
+                    case "S":
+                    case "F":
+                    case "T":
+                    case "C":
+                        var boolResult = plc.ReadBool($"{dataType}{address}", length);
+                        if (boolResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取布尔值成功: {boolResult.Content}");
+                            // _logService?.Info($"UDP ASCII读取布尔值成功: {boolResult.Content}");
+                            return boolResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取布尔值失败: {boolResult.Message}");
+                        // _logService?.Error($"UDP ASCII读取布尔值失败: {boolResult.Message}");
+                        throw new Exception(boolResult.Message);
+                    case "D":
+                    case "W":
+                    case "R":
+                        var shortResult = plc.ReadInt16($"{dataType}{address}", length);
+                        if (shortResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取短整型成功: {shortResult.Content}");
+                            // _logService?.Info($"UDP ASCII读取短整型成功: {shortResult.Content}");
+                            return shortResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取短整型失败: {shortResult.Message}");
+                        // _logService?.Error($"UDP ASCII读取短整型失败: {shortResult.Message}");
+                        throw new Exception(shortResult.Message);
+                    case "TN": // 定时器当前值
+                    case "CN": // 计数器当前值
+                        var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
+                        if (shortResultTC.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取定时器/计数器成功: {shortResultTC.Content}");
+                            // _logService?.Info($"UDP ASCII读取定时器/计数器成功: {shortResultTC.Content}");
+                            return shortResultTC.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取定时器/计数器失败: {shortResultTC.Message}");
+                        // _logService?.Error($"UDP ASCII读取定时器/计数器失败: {shortResultTC.Message}");
+                        throw new Exception(shortResultTC.Message);
+                    case "D32": // 32位整型
+                        var intResultD32 = plc.ReadInt32($"D{address}", length);
+                        if (intResultD32.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取32位整型成功: {intResultD32.Content}");
+                            // _logService?.Info($"UDP ASCII读取32位整型成功: {intResultD32.Content}");
+                            return intResultD32.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取32位整型失败: {intResultD32.Message}");
+                        // _logService?.Error($"UDP ASCII读取32位整型失败: {intResultD32.Message}");
+                        throw new Exception(intResultD32.Message);
+                    case "Float": // 浮点数
+                        var floatResult = plc.ReadFloat($"D{address}", length);
+                        if (floatResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取浮点数成功: {floatResult.Content}");
+                            // _logService?.Info($"UDP ASCII读取浮点数成功: {floatResult.Content}");
+                            return floatResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取浮点数失败: {floatResult.Message}");
+                        // _logService?.Error($"UDP ASCII读取浮点数失败: {floatResult.Message}");
+                        throw new Exception(floatResult.Message);
+                    case "DFloat": // 双精度浮点
+                        var doubleResult = plc.ReadDouble($"D{address}", length);
+                        if (doubleResult.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取双精度浮点成功: {doubleResult.Content}");
+                            // _logService?.Info($"UDP ASCII读取双精度浮点成功: {doubleResult.Content}");
+                            return doubleResult.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取双精度浮点失败: {doubleResult.Message}");
+                        // _logService?.Error($"UDP ASCII读取双精度浮点失败: {doubleResult.Message}");
+                        throw new Exception(doubleResult.Message);
+                    default:
+                        var errorMsg = $"不支持的数据类型: {dataType}";
+                        // _logService?.Error(errorMsg);
+                        throw new NotSupportedException(errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logNet?.WriteException($"UDP ASCII读取数据异常: 类型={dataType}, 地址={address}, 长度={length}", ex);
+                // _logService?.Error($"UDP ASCII读取数据异常: 类型={dataType}, 地址={address}, 长度={length}", ex);
+                throw;
             }
         }
 
@@ -668,11 +1021,163 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 }
                 else if (_plcUdp != null)
                 {
-                    return WriteData(_plcUdp, dataType, address, value);
+                    for (int retry = 0; retry < 3; retry++)
+                    {
+                        try
+                        {
+                            return WriteData(_plcUdp, dataType, address, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            // 如果是套接字地址错误，重新创建UDP实例
+                            if (ex.Message.Contains("套接字地址") || ex.Message.Contains("socket address") || ex.Message.Contains("只允许使用一次") || ex.Message.Contains("通常每个套接字地址"))
+                            {
+                                _logNet?.WriteException($"UDP连接错误，重新创建实例 (尝试 {retry + 1}/3)", ex);
+                                // _logService?.Error($"UDP连接错误，重新创建实例 (尝试 {retry + 1}/3)", ex);
+                                // 重新创建UDP实例
+                            _plcUdp = null;
+                            System.Threading.Thread.Sleep(100); // 短暂延迟，让操作系统有时间释放端口
+                            _plcUdp = new MelsecMcUdp(_ipAddress, _port);
+                            _plcUdp.LogNet = _logNet;
+                            try
+                            {
+                                // 验证本地IP地址格式
+                                if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                                {
+                                    // 验证端口范围
+                                    if (_localPort >= 1 && _localPort <= 65535)
+                                    {
+                                        _plcUdp.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
+                                        // 尝试设置套接字选项，允许端口重用
+                                        try
+                                        {
+                                            var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                            if (socketField != null)
+                                            {
+                                                var socket = socketField.GetValue(_plcUdp) as System.Net.Sockets.Socket;
+                                                if (socket != null)
+                                                {
+                                                    socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                                }
+                                            }
+                                        }
+                                        catch (Exception socketEx)
+                                        {
+                                            _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                            // _logService?.Error("设置套接字选项失败", socketEx);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                        _logNet?.WriteException("UDP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                        // _logService?.Error("UDP本地端口无效，使用默认端口", null, errorMsg);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                    _logNet?.WriteException("UDP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                                    // _logService?.Error("UDP本地IP地址格式无效，不设置本地绑定", null, errorMsg);
+                                }
+                            }
+                            catch (Exception bindEx)
+                        {
+                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                        }
+                                // 如果是最后一次尝试，直接返回失败
+                                if (retry == 2)
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    return false;
                 }
                 else if (_plcUdpAscii != null)
                 {
-                    return WriteData(_plcUdpAscii, dataType, address, value);
+                    for (int retry = 0; retry < 3; retry++)
+                    {
+                        try
+                        {
+                            return WriteData(_plcUdpAscii, dataType, address, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            // 如果是套接字地址错误，重新创建UDP实例
+                            if (ex.Message.Contains("套接字地址") || ex.Message.Contains("socket address") || ex.Message.Contains("只允许使用一次") || ex.Message.Contains("通常每个套接字地址"))
+                            {
+                                _logNet?.WriteException($"UDP连接错误，重新创建实例 (尝试 {retry + 1}/3)", ex);
+                                // _logService?.Error($"UDP连接错误，重新创建实例 (尝试 {retry + 1}/3)", ex);
+                                // 重新创建UDP实例
+                            _plcUdpAscii = null;
+                            System.Threading.Thread.Sleep(100); // 短暂延迟，让操作系统有时间释放端口
+                            _plcUdpAscii = new MelsecMcAsciiUdp(_ipAddress, _port);
+                            _plcUdpAscii.LogNet = _logNet;
+                            try
+                            {
+                                // 验证本地IP地址格式
+                                if (System.Net.IPAddress.TryParse(_localIpAddress, out var localIp))
+                                {
+                                    // 验证端口范围
+                                    if (_localPort >= 1 && _localPort <= 65535)
+                                    {
+                                        _plcUdpAscii.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
+                                        // 尝试设置套接字选项，允许端口重用
+                                        try
+                                        {
+                                            var socketField = _plcUdpAscii.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                            if (socketField != null)
+                                            {
+                                                var socket = socketField.GetValue(_plcUdpAscii) as System.Net.Sockets.Socket;
+                                                if (socket != null)
+                                                {
+                                                    socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                                }
+                                            }
+                                        }
+                                        catch (Exception socketEx)
+                                        {
+                                            _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                            // _logService?.Error("设置套接字选项失败", socketEx);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var errorMsg = $"端口 {_localPort} 不在有效范围内 (1-65535)";
+                                        _logNet?.WriteException("UDP本地端口无效，使用默认端口", new Exception(errorMsg));
+                                        // _logService?.Error("UDP本地端口无效，使用默认端口", null, errorMsg);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMsg = $"IP地址 {_localIpAddress} 格式无效";
+                                    _logNet?.WriteException("UDP本地IP地址格式无效，不设置本地绑定", new Exception(errorMsg));
+                                    // _logService?.Error("UDP本地IP地址格式无效，不设置本地绑定", null, errorMsg);
+                                }
+                            }
+                            catch (Exception bindEx)
+                        {
+                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                        }
+                                // 如果是最后一次尝试，直接返回失败
+                                if (retry == 2)
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    return false;
                 }
                 else if (_a1ePlc != null)
                 {

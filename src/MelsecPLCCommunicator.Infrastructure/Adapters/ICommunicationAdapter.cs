@@ -87,8 +87,11 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <param name="ipAddress">IP地址</param>
         /// <param name="port">端口</param>
         /// <param name="protocolType">协议类型</param>
+        /// <param name="localIpAddress">本地IP地址</param>
+        /// <param name="localPort">本地端口</param>
+        /// <param name="logService">日志服务</param>
         /// <returns>通信适配器</returns>
-        ICommunicationAdapter CreateNetworkAdapter(string ipAddress, int port, string protocolType);
+        ICommunicationAdapter CreateNetworkAdapter(string ipAddress, int port, string protocolType, string localIpAddress = "192.168.1.100", int localPort = 3000, object logService = null);
 
         /// <summary>
         /// 创建串口通信适配器
@@ -109,12 +112,15 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <param name="protocolType">协议类型</param>
         /// <param name="ipAddress">IP地址</param>
         /// <param name="port">端口</param>
+        /// <param name="localIpAddress">本地IP地址</param>
+        /// <param name="localPort">本地端口</param>
         /// <param name="portName">串口名称</param>
         /// <param name="baudRate">波特率</param>
         /// <param name="parity">校验位</param>
         /// <param name="dataBits">数据位</param>
         /// <param name="stopBits">停止位</param>
+        /// <param name="logService">日志服务</param>
         /// <returns>通信适配器</returns>
-        ICommunicationAdapter CreateAdapter(string interfaceType, string protocolType, string ipAddress = null, int port = 0, string portName = null, int baudRate = 9600, string parity = "None", int dataBits = 8, int stopBits = 1);
+        ICommunicationAdapter CreateAdapter(string interfaceType, string protocolType, string ipAddress = null, int port = 0, string localIpAddress = "192.168.1.100", int localPort = 3000, string portName = null, int baudRate = 9600, string parity = "None", int dataBits = 8, int stopBits = 1, object logService = null);
     }
 }

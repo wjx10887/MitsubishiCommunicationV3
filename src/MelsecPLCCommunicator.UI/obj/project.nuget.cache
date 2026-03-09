@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "hXPCi4VfkoI=",
+  "dgSpecHash": "GC8PO5/uX/Y=",
   "success": true,
-  "projectFilePath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
+  "projectFilePath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Administrator\\.nuget\\packages\\hslcommunication\\10.6.0\\hslcommunication.10.6.0.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\hslcommunication\\12.6.3\\hslcommunication.12.6.3.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\6.0.0\\microsoft.extensions.dependencyinjection.6.0.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
