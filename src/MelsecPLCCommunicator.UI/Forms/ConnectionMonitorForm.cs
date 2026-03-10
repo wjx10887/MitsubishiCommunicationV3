@@ -23,7 +23,7 @@ namespace MelsecPLCCommunicator.UI.Forms
         private void InitializeUI()
         {
             this.Text = "连接监控";
-            this.Size = new System.Drawing.Size(800, 500);
+            this.Size = new System.Drawing.Size(1600, 1000);
             this.StartPosition = FormStartPosition.CenterParent;
 
             // 创建面板
@@ -42,8 +42,21 @@ namespace MelsecPLCCommunicator.UI.Forms
             dgvConnections = new DataGridView
             {
                 Dock = DockStyle.Fill,
-                AutoGenerateColumns = false
+                AutoGenerateColumns = false,
+                RowHeadersWidth = 60,
+                Font = new System.Drawing.Font("微软雅黑", 11.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134))),
+                ColumnHeadersDefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle
+                {
+                    Font = new System.Drawing.Font("微软雅黑", 11.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134))),
+                    BackColor = System.Drawing.Color.LightSteelBlue,
+                    ForeColor = System.Drawing.Color.DarkBlue
+                },
+                AlternatingRowsDefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle
+                {
+                    BackColor = System.Drawing.Color.LightCyan
+                }
             };
+            dgvConnections.RowTemplate.Height = 45;
             dgvConnections.Columns.Add("ConnectionName", "连接名称");
             dgvConnections.Columns.Add("ConnectionType", "连接方式");
             dgvConnections.Columns.Add("PlcSeries", "PLC系列");
@@ -54,14 +67,14 @@ namespace MelsecPLCCommunicator.UI.Forms
             dgvConnections.Columns.Add("AlarmCode", "报警代码");
 
             // 设置列宽
-            dgvConnections.Columns["ConnectionName"].Width = 120;
-            dgvConnections.Columns["ConnectionType"].Width = 100;
-            dgvConnections.Columns["PlcSeries"].Width = 80;
-            dgvConnections.Columns["Protocol"].Width = 80;
-            dgvConnections.Columns["Address"].Width = 120;
-            dgvConnections.Columns["Port"].Width = 60;
-            dgvConnections.Columns["Status"].Width = 80;
-            dgvConnections.Columns["AlarmCode"].Width = 80;
+            dgvConnections.Columns["ConnectionName"].Width = 200;
+            dgvConnections.Columns["ConnectionType"].Width = 150;
+            dgvConnections.Columns["PlcSeries"].Width = 120;
+            dgvConnections.Columns["Protocol"].Width = 150;
+            dgvConnections.Columns["Address"].Width = 200;
+            dgvConnections.Columns["Port"].Width = 100;
+            dgvConnections.Columns["Status"].Width = 120;
+            dgvConnections.Columns["AlarmCode"].Width = 120;
 
             groupBoxConnections.Controls.Add(dgvConnections);
             panelMain.Controls.Add(groupBoxConnections);
@@ -91,31 +104,51 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 获取连接状态
             var status = _connectionService.GetConnectionStatus();
             
-            // 模拟多个连接（实际应该从连接服务获取所有连接）
-            // 这里添加一个默认连接
-            var row = dgvConnections.Rows.Add();
-            dgvConnections.Rows[row].Cells["ConnectionName"].Value = "默认连接";
-            dgvConnections.Rows[row].Cells["ConnectionType"].Value = "以太网";
-            dgvConnections.Rows[row].Cells["PlcSeries"].Value = "Q系列";
-            dgvConnections.Rows[row].Cells["Protocol"].Value = "MC协议";
-            dgvConnections.Rows[row].Cells["Address"].Value = "192.168.1.100";
-            dgvConnections.Rows[row].Cells["Port"].Value = "5000";
+            // 获取当前连接配置
+            var currentConfig = _connectionService.GetCurrentConfig();
             
-            if (status.Success)
+            if (currentConfig != null)
             {
-                dgvConnections.Rows[row].Cells["Status"].Value = status.Data ? "已连接" : "未连接";
-                dgvConnections.Rows[row].Cells["Status"].Style.BackColor = status.Data ? System.Drawing.Color.Green : System.Drawing.Color.Red;
-                dgvConnections.Rows[row].Cells["Status"].Style.ForeColor = System.Drawing.Color.White;
+                // 添加当前连接
+                var row = dgvConnections.Rows.Add();
+                dgvConnections.Rows[row].Cells["ConnectionName"].Value = currentConfig.ConnectionName;
+                dgvConnections.Rows[row].Cells["ConnectionType"].Value = currentConfig.InterfaceType;
+                dgvConnections.Rows[row].Cells["PlcSeries"].Value = currentConfig.PlcSeries;
+                dgvConnections.Rows[row].Cells["Protocol"].Value = currentConfig.ProtocolType;
+                dgvConnections.Rows[row].Cells["Address"].Value = currentConfig.IpAddress ?? currentConfig.PortName;
+                dgvConnections.Rows[row].Cells["Port"].Value = currentConfig.Port > 0 ? currentConfig.Port.ToString() : "-";
+                
+                if (status.Success)
+                {
+                    dgvConnections.Rows[row].Cells["Status"].Value = status.Data ? "已连接" : "未连接";
+                    dgvConnections.Rows[row].Cells["Status"].Style.BackColor = status.Data ? System.Drawing.Color.Green : System.Drawing.Color.Red;
+                    dgvConnections.Rows[row].Cells["Status"].Style.ForeColor = System.Drawing.Color.White;
+                }
+                else
+                {
+                    dgvConnections.Rows[row].Cells["Status"].Value = "状态未知";
+                    dgvConnections.Rows[row].Cells["Status"].Style.BackColor = System.Drawing.Color.Yellow;
+                    dgvConnections.Rows[row].Cells["Status"].Style.ForeColor = System.Drawing.Color.Black;
+                }
+
+                // 模拟报警代码（实际应该从连接服务获取）
+                dgvConnections.Rows[row].Cells["AlarmCode"].Value = "无";
             }
             else
             {
-                dgvConnections.Rows[row].Cells["Status"].Value = "状态未知";
-                dgvConnections.Rows[row].Cells["Status"].Style.BackColor = System.Drawing.Color.Yellow;
-                dgvConnections.Rows[row].Cells["Status"].Style.ForeColor = System.Drawing.Color.Black;
+                // 没有活动连接
+                var row = dgvConnections.Rows.Add();
+                dgvConnections.Rows[row].Cells["ConnectionName"].Value = "无活动连接";
+                dgvConnections.Rows[row].Cells["ConnectionType"].Value = "-";
+                dgvConnections.Rows[row].Cells["PlcSeries"].Value = "-";
+                dgvConnections.Rows[row].Cells["Protocol"].Value = "-";
+                dgvConnections.Rows[row].Cells["Address"].Value = "-";
+                dgvConnections.Rows[row].Cells["Port"].Value = "-";
+                dgvConnections.Rows[row].Cells["Status"].Value = "未连接";
+                dgvConnections.Rows[row].Cells["Status"].Style.BackColor = System.Drawing.Color.Red;
+                dgvConnections.Rows[row].Cells["Status"].Style.ForeColor = System.Drawing.Color.White;
+                dgvConnections.Rows[row].Cells["AlarmCode"].Value = "-";
             }
-
-            // 模拟报警代码（实际应该从连接服务获取）
-            dgvConnections.Rows[row].Cells["AlarmCode"].Value = "无";
         }
 
         private void StartStatusTimer()
@@ -144,10 +177,9 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // ConnectionMonitorForm
             // 
-            this.ClientSize = new System.Drawing.Size(600, 400);
+            this.ClientSize = new System.Drawing.Size(1389, 744);
             this.Name = "ConnectionMonitorForm";
             this.Text = "连接监控";
-           
             this.ResumeLayout(false);
 
         }

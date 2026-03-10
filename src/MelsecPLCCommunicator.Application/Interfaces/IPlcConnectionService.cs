@@ -46,5 +46,11 @@ namespace MelsecPLCCommunicator.Application.Interfaces
         /// </summary>
         /// <returns>连接状态</returns>
         Result<bool> GetConnectionStatus();
+
+        /// <summary>
+        /// 获取当前连接配置
+        /// </summary>
+        /// <returns>当前连接配置</returns>
+        ConnectionConfigDto GetCurrentConfig();
     }
 }

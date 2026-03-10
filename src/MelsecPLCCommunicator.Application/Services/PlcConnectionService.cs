@@ -15,6 +15,7 @@ namespace MelsecPLCCommunicator.Application.Services
         private readonly ICommunicationAdapterFactory _adapterFactory;
         private readonly ILogService _logService;
         private ICommunicationAdapter _currentAdapter;
+        private ConnectionConfigDto _currentConfig;
 
         /// <summary>
         /// 通讯帧事件
@@ -105,6 +106,9 @@ namespace MelsecPLCCommunicator.Application.Services
                     await Task.Run(() => _currentAdapter.Disconnect());
                 }
 
+                // 保存当前连接配置
+                _currentConfig = config;
+
                 // 创建新适配器并连接
                 _currentAdapter = _adapterFactory.CreateAdapter(
                     config.InterfaceType,
@@ -163,6 +167,10 @@ namespace MelsecPLCCommunicator.Application.Services
                 {
                     _logService.Info("设备未连接，无需断开");
                 }
+                
+                // 清空当前连接配置
+                _currentConfig = null;
+                
                 return Result.SuccessResult();
             }
             catch (System.Exception ex)
@@ -207,6 +215,15 @@ namespace MelsecPLCCommunicator.Application.Services
             
             // 传递事件给上层
             FrameReceived?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// 获取当前连接配置
+        /// </summary>
+        /// <returns>当前连接配置</returns>
+        public ConnectionConfigDto GetCurrentConfig()
+        {
+            return _currentConfig;
         }
 
 

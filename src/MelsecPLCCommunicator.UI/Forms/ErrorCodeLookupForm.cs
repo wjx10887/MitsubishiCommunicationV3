@@ -6,219 +6,154 @@ namespace MelsecPLCCommunicator.UI.Forms
 {
     public partial class ErrorCodeLookupForm : Form
     {
-        private List<ErrorCodeInfo> _errorCodes;
+        private readonly List<ErrorCodeInfo> _errorCodes;
+        private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.Label labelErrorCode;
+        private System.Windows.Forms.TextBox txtErrorCode;
+        private System.Windows.Forms.Button btnLookup;
+        private System.Windows.Forms.Label labelDescription;
+        private System.Windows.Forms.TextBox txtDescription;
+        private System.Windows.Forms.Panel panelBottom;
+        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.TabPage tabErrorCodeList;
+        private System.Windows.Forms.DataGridView dgvErrorCodeList;
+        private System.Windows.Forms.TabPage tabAlarmHistory;
+        private System.Windows.Forms.DataGridView dgvAlarmHistory;
+        private System.Windows.Forms.TabPage tabDiagnosticTools;
+        private System.Windows.Forms.Panel panelDiagnostic;
+        private System.Windows.Forms.Label labelDiagnosticTitle;
+        private System.Windows.Forms.Label labelIpAddress;
+        private System.Windows.Forms.TextBox txtIpAddress;
+        private System.Windows.Forms.Button btnPing;
+        private DataGridViewTextBoxColumn Time;
+        private DataGridViewTextBoxColumn ErrorCode;
+        private DataGridViewTextBoxColumn AlarmDescription;
+        private DataGridViewTextBoxColumn AlarmSolution;
+        private DataGridViewTextBoxColumn Code;
+        private DataGridViewTextBoxColumn Description;
+        private DataGridViewTextBoxColumn Cause;
+        private DataGridViewTextBoxColumn Solution;
+        private System.Windows.Forms.TextBox txtPingResult;
 
         public ErrorCodeLookupForm()
         {
-            InitializeComponent();
             _errorCodes = GetErrorCodeList();
-            InitializeUI();
+            InitializeComponent();
+            InitializeData();
         }
 
-        private void InitializeUI()
+        private void InitializeData()
         {
-            this.Text = "错误码查询";
-            this.Size = new System.Drawing.Size(1000, 600);
-            this.StartPosition = FormStartPosition.CenterParent;
-
-            // 创建面板
-            var panelTop = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 120
-            };
-
-            var panelBottom = new Panel
-            {
-                Dock = DockStyle.Fill
-            };
-
-            // 创建顶部控件
-            var labelErrorCode = new Label
-            {
-                Text = "错误码：",
-                Location = new System.Drawing.Point(20, 20),
-                AutoSize = true,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular)
-            };
-
-            var txtErrorCode = new TextBox
-            {
-                Location = new System.Drawing.Point(100, 17),
-                Width = 250,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular)
-            };
-
-            var btnLookup = new Button
-            {
-                Text = "查询",
-                Location = new System.Drawing.Point(360, 15),
-                Width = 100,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular)
-            };
-
-            var labelDescription = new Label
-            {
-                Text = "描述：",
-                Location = new System.Drawing.Point(20, 60),
-                AutoSize = true,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular)
-            };
-
-            var txtDescription = new TextBox
-            {
-                Location = new System.Drawing.Point(100, 57),
-                Width = 870,
-                Height = 40,
-                Multiline = true,
-                ReadOnly = true,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular),
-                ScrollBars = ScrollBars.Vertical
-            };
-
-            // 添加顶部控件
-            panelTop.Controls.Add(labelErrorCode);
-            panelTop.Controls.Add(txtErrorCode);
-            panelTop.Controls.Add(btnLookup);
-            panelTop.Controls.Add(labelDescription);
-            panelTop.Controls.Add(txtDescription);
-
-            // 创建底部控件
-            var tabControl = new TabControl
-            {
-                Dock = DockStyle.Fill
-            };
-
-            // 错误码列表标签页
-            var tabErrorCodeList = new TabPage("错误码列表");
-            var dgvErrorCodeList = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                AutoGenerateColumns = false,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular),
-                RowHeadersVisible = false,
-                AllowUserToAddRows = false,
-                ReadOnly = true
-            };
-            
-            // 设置列
-            var colCode = new DataGridViewTextBoxColumn
-            {
-                Name = "Code",
-                HeaderText = "错误码",
-                Width = 120
-            };
-            var colDescription = new DataGridViewTextBoxColumn
-            {
-                Name = "Description",
-                HeaderText = "描述",
-                Width = 200
-            };
-            var colCause = new DataGridViewTextBoxColumn
-            {
-                Name = "Cause",
-                HeaderText = "原因",
-                Width = 300
-            };
-            var colSolution = new DataGridViewTextBoxColumn
-            {
-                Name = "Solution",
-                HeaderText = "解除方式",
-                Width = 300
-            };
-            
-            dgvErrorCodeList.Columns.AddRange(new DataGridViewColumn[] { colCode, colDescription, colCause, colSolution });
-
             // 填充错误码列表
-            foreach (var errorCode in _errorCodes)
+            if (dgvErrorCodeList != null)
             {
-                dgvErrorCodeList.Rows.Add(errorCode.Code, errorCode.Description, errorCode.Cause, errorCode.Solution);
+                foreach (var errorCode in _errorCodes)
+                {
+                    dgvErrorCodeList.Rows.Add(errorCode.Code, errorCode.Description, errorCode.Cause, errorCode.Solution);
+                }
             }
 
-            tabErrorCodeList.Controls.Add(dgvErrorCodeList);
-
-            // 报警历史标签页
-            var tabAlarmHistory = new TabPage("报警历史");
-            var dgvAlarmHistory = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                AutoGenerateColumns = false,
-                Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular),
-                RowHeadersVisible = false,
-                AllowUserToAddRows = false,
-                ReadOnly = true
-            };
-            
-            var colTime = new DataGridViewTextBoxColumn
-            {
-                Name = "Time",
-                HeaderText = "时间",
-                Width = 150
-            };
-            var colErrorCode = new DataGridViewTextBoxColumn
-            {
-                Name = "ErrorCode",
-                HeaderText = "错误码",
-                Width = 100
-            };
-            var colDesc = new DataGridViewTextBoxColumn
-            {
-                Name = "Description",
-                HeaderText = "描述",
-                Width = 300
-            };
-            var colStatus = new DataGridViewTextBoxColumn
-            {
-                Name = "Status",
-                HeaderText = "状态",
-                Width = 100
-            };
-            
-            dgvAlarmHistory.Columns.AddRange(new DataGridViewColumn[] { colTime, colErrorCode, colDesc, colStatus });
-
             // 填充报警历史（模拟数据）
-            dgvAlarmHistory.Rows.Add(DateTime.Now.AddMinutes(-30), "01 00", "命令错误", "已解决");
-            dgvAlarmHistory.Rows.Add(DateTime.Now.AddHours(-1), "02 00", "格式错误", "已解决");
-            dgvAlarmHistory.Rows.Add(DateTime.Now.AddHours(-2), "03 00", "数据范围错误", "已解决");
-
-            tabAlarmHistory.Controls.Add(dgvAlarmHistory);
-
-            // 添加标签页
-            tabControl.TabPages.Add(tabErrorCodeList);
-            tabControl.TabPages.Add(tabAlarmHistory);
-
-            // 添加底部控件
-            panelBottom.Controls.Add(tabControl);
-
-            // 添加面板到窗体
-            this.Controls.Add(panelTop);
-            this.Controls.Add(panelBottom);
-
-            // 查询按钮点击事件
-            btnLookup.Click += (sender, e) =>
+            if (dgvAlarmHistory != null)
             {
-                var code = txtErrorCode.Text.Trim();
-                var errorCode = _errorCodes.Find(ec => ec.Code == code);
-                if (errorCode != null)
-                {
-                    txtDescription.Text = $"{errorCode.Description}\r\n原因：{errorCode.Cause}\r\n解决方法：{errorCode.Solution}";
-                }
-                else
-                {
-                    txtDescription.Text = "未找到该错误码";
-                }
-            };
+                dgvAlarmHistory.Rows.Add(DateTime.Now.AddMinutes(-30), "01 00", "命令错误", "已解决");
+                dgvAlarmHistory.Rows.Add(DateTime.Now.AddHours(-1), "02 00", "格式错误", "已解决");
+                dgvAlarmHistory.Rows.Add(DateTime.Now.AddHours(-2), "03 00", "数据范围错误", "已解决");
+                dgvAlarmHistory.Rows.Add(DateTime.Now.AddHours(-3), "0x0400", "保护：无法写入", "已解决");
+                dgvAlarmHistory.Rows.Add(DateTime.Now.AddHours(-4), "0x0401", "指定的设备代码不存在", "已解决");
+            }
 
-            // 错误码列表点击事件
-            dgvErrorCodeList.CellClick += (sender, e) =>
+            // 绑定事件
+            if (btnLookup != null)
             {
-                if (e.RowIndex >= 0)
+                btnLookup.Click += BtnLookup_Click;
+            }
+            if (dgvErrorCodeList != null)
+            {
+                dgvErrorCodeList.CellClick += DgvErrorCodeList_CellClick;
+            }
+            if (dgvAlarmHistory != null)
+            {
+                dgvAlarmHistory.CellClick += DgvAlarmHistory_CellClick;
+            }
+            if (btnPing != null)
+            {
+                btnPing.Click += BtnPing_Click;
+            }
+        }
+
+        private void BtnLookup_Click(object sender, EventArgs e)
+        {
+            if (txtErrorCode == null || txtDescription == null)
+                return;
+
+            var code = txtErrorCode.Text.Trim();
+            var errorCode = _errorCodes.Find(ec => ec.Code == code);
+            if (errorCode != null)
+            {
+                txtDescription.Text = $"{errorCode.Description}\r\n原因：{errorCode.Cause}\r\n解决方法：{errorCode.Solution}";
+            }
+            else
+            {
+                txtDescription.Text = "未找到该错误码";
+            }
+        }
+
+        private void DgvErrorCodeList_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvErrorCodeList != null && txtErrorCode != null && btnLookup != null)
+            {
+                var row = dgvErrorCodeList.Rows[e.RowIndex];
+                txtErrorCode.Text = row.Cells["Code"].Value.ToString();
+                btnLookup.PerformClick();
+            }
+        }
+
+        private void DgvAlarmHistory_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvAlarmHistory != null && txtErrorCode != null && btnLookup != null)
+            {
+                var row = dgvAlarmHistory.Rows[e.RowIndex];
+                txtErrorCode.Text = row.Cells["ErrorCode"].Value.ToString();
+                btnLookup.PerformClick();
+            }
+        }
+
+        private void BtnPing_Click(object sender, EventArgs e)
+        {
+            if (txtIpAddress == null || txtPingResult == null)
+                return;
+
+            var ipAddress = txtIpAddress.Text.Trim();
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                txtPingResult.Text = "请输入PLC IP地址";
+                return;
+            }
+
+            txtPingResult.Text = "正在执行Ping测试...\n";
+            try
+            {
+                using (var ping = new System.Net.NetworkInformation.Ping())
                 {
-                    var row = dgvErrorCodeList.Rows[e.RowIndex];
-                    txtErrorCode.Text = row.Cells["Code"].Value.ToString();
-                    btnLookup.PerformClick();
+                    var reply = ping.Send(ipAddress, 2000);
+                    if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                    {
+                        txtPingResult.Text += $"Ping成功！\n";
+                        txtPingResult.Text += $"IP地址: {reply.Address}\n";
+                        txtPingResult.Text += $"往返时间: {reply.RoundtripTime}ms\n";
+                        txtPingResult.Text += $"TTL: {reply.Options.Ttl}\n";
+                    }
+                    else
+                    {
+                        txtPingResult.Text += $"Ping失败: {reply.Status}\n";
+                    }
                 }
-            };
+            }
+            catch (Exception ex)
+            {
+                txtPingResult.Text += $"Ping测试异常: {ex.Message}\n";
+            }
         }
 
         private List<ErrorCodeInfo> GetErrorCodeList()
@@ -301,11 +236,347 @@ namespace MelsecPLCCommunicator.UI.Forms
 
         private void InitializeComponent()
         {
+            this.Time = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ErrorCode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AlarmDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AlarmSolution = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.txtDescription = new System.Windows.Forms.TextBox();
+            this.labelDescription = new System.Windows.Forms.Label();
+            this.btnLookup = new System.Windows.Forms.Button();
+            this.txtErrorCode = new System.Windows.Forms.TextBox();
+            this.labelErrorCode = new System.Windows.Forms.Label();
+            this.panelBottom = new System.Windows.Forms.Panel();
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabErrorCodeList = new System.Windows.Forms.TabPage();
+            this.dgvErrorCodeList = new System.Windows.Forms.DataGridView();
+            this.tabAlarmHistory = new System.Windows.Forms.TabPage();
+            this.dgvAlarmHistory = new System.Windows.Forms.DataGridView();
+            this.tabDiagnosticTools = new System.Windows.Forms.TabPage();
+            this.panelDiagnostic = new System.Windows.Forms.Panel();
+            this.txtPingResult = new System.Windows.Forms.TextBox();
+            this.btnPing = new System.Windows.Forms.Button();
+            this.txtIpAddress = new System.Windows.Forms.TextBox();
+            this.labelIpAddress = new System.Windows.Forms.Label();
+            this.labelDiagnosticTitle = new System.Windows.Forms.Label();
+            this.Solution = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cause = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panelTop.SuspendLayout();
+            this.panelBottom.SuspendLayout();
+            this.tabControl.SuspendLayout();
+            this.tabErrorCodeList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvErrorCodeList)).BeginInit();
+            this.tabAlarmHistory.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAlarmHistory)).BeginInit();
+            this.tabDiagnosticTools.SuspendLayout();
+            this.panelDiagnostic.SuspendLayout();
             this.SuspendLayout();
-            this.ClientSize = new System.Drawing.Size(800, 500);
+            // 
+            // Time
+            // 
+            this.Time.HeaderText = "时间";
+            this.Time.MinimumWidth = 12;
+            this.Time.Name = "Time";
+            this.Time.ReadOnly = true;
+            // 
+            // ErrorCode
+            // 
+            this.ErrorCode.HeaderText = "错误码";
+            this.ErrorCode.MinimumWidth = 12;
+            this.ErrorCode.Name = "ErrorCode";
+            this.ErrorCode.ReadOnly = true;
+            // 
+            // AlarmDescription
+            // 
+            this.AlarmDescription.HeaderText = "描述";
+            this.AlarmDescription.MinimumWidth = 12;
+            this.AlarmDescription.Name = "AlarmDescription";
+            this.AlarmDescription.ReadOnly = true;
+            // 
+            // AlarmSolution
+            // 
+            this.AlarmSolution.HeaderText = "解决方法";
+            this.AlarmSolution.MinimumWidth = 12;
+            this.AlarmSolution.Name = "AlarmSolution";
+            this.AlarmSolution.ReadOnly = true;
+            // 
+            // panelTop
+            // 
+            this.panelTop.Controls.Add(this.txtDescription);
+            this.panelTop.Controls.Add(this.labelDescription);
+            this.panelTop.Controls.Add(this.btnLookup);
+            this.panelTop.Controls.Add(this.txtErrorCode);
+            this.panelTop.Controls.Add(this.labelErrorCode);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(2136, 195);
+            this.panelTop.TabIndex = 0;
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtDescription.Location = new System.Drawing.Point(196, 107);
+            this.txtDescription.Multiline = true;
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.ReadOnly = true;
+            this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtDescription.Size = new System.Drawing.Size(1050, 51);
+            this.txtDescription.TabIndex = 4;
+            // 
+            // labelDescription
+            // 
+            this.labelDescription.AutoSize = true;
+            this.labelDescription.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelDescription.Location = new System.Drawing.Point(30, 110);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(195, 46);
+            this.labelDescription.TabIndex = 3;
+            this.labelDescription.Text = "详细信息：";
+            // 
+            // btnLookup
+            // 
+            this.btnLookup.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnLookup.Location = new System.Drawing.Point(565, 12);
+            this.btnLookup.Name = "btnLookup";
+            this.btnLookup.Size = new System.Drawing.Size(120, 67);
+            this.btnLookup.TabIndex = 2;
+            this.btnLookup.Text = "查询";
+            this.btnLookup.UseVisualStyleBackColor = true;
+            // 
+            // txtErrorCode
+            // 
+            this.txtErrorCode.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtErrorCode.Location = new System.Drawing.Point(196, 22);
+            this.txtErrorCode.Name = "txtErrorCode";
+            this.txtErrorCode.Size = new System.Drawing.Size(300, 54);
+            this.txtErrorCode.TabIndex = 1;
+            // 
+            // labelErrorCode
+            // 
+            this.labelErrorCode.AutoSize = true;
+            this.labelErrorCode.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelErrorCode.Location = new System.Drawing.Point(30, 30);
+            this.labelErrorCode.Name = "labelErrorCode";
+            this.labelErrorCode.Size = new System.Drawing.Size(160, 46);
+            this.labelErrorCode.TabIndex = 0;
+            this.labelErrorCode.Text = "错误码：";
+            // 
+            // panelBottom
+            // 
+            this.panelBottom.Controls.Add(this.tabControl);
+            this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelBottom.Location = new System.Drawing.Point(0, 195);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Size = new System.Drawing.Size(2136, 1016);
+            this.panelBottom.TabIndex = 1;
+            // 
+            // tabControl
+            // 
+            this.tabControl.Controls.Add(this.tabErrorCodeList);
+            this.tabControl.Controls.Add(this.tabAlarmHistory);
+            this.tabControl.Controls.Add(this.tabDiagnosticTools);
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tabControl.Location = new System.Drawing.Point(0, 0);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(2136, 1016);
+            this.tabControl.TabIndex = 0;
+            // 
+            // tabErrorCodeList
+            // 
+            this.tabErrorCodeList.Controls.Add(this.dgvErrorCodeList);
+            this.tabErrorCodeList.Location = new System.Drawing.Point(10, 63);
+            this.tabErrorCodeList.Name = "tabErrorCodeList";
+            this.tabErrorCodeList.Padding = new System.Windows.Forms.Padding(3);
+            this.tabErrorCodeList.Size = new System.Drawing.Size(2116, 943);
+            this.tabErrorCodeList.TabIndex = 0;
+            this.tabErrorCodeList.Text = "错误码列表";
+            this.tabErrorCodeList.UseVisualStyleBackColor = true;
+            // 
+            // dgvErrorCodeList
+            // 
+            this.dgvErrorCodeList.AllowUserToAddRows = false;
+            this.dgvErrorCodeList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvErrorCodeList.ColumnHeadersHeight = 58;
+            this.dgvErrorCodeList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Code,
+            this.Description,
+            this.Cause,
+            this.Solution});
+            this.dgvErrorCodeList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvErrorCodeList.Font = new System.Drawing.Font("微软雅黑", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dgvErrorCodeList.Location = new System.Drawing.Point(3, 3);
+            this.dgvErrorCodeList.Name = "dgvErrorCodeList";
+            this.dgvErrorCodeList.ReadOnly = true;
+            this.dgvErrorCodeList.RowHeadersVisible = false;
+            this.dgvErrorCodeList.RowHeadersWidth = 102;
+            this.dgvErrorCodeList.RowTemplate.Height = 60;
+            this.dgvErrorCodeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvErrorCodeList.Size = new System.Drawing.Size(2110, 937);
+            this.dgvErrorCodeList.TabIndex = 0;
+            // 
+            // tabAlarmHistory
+            // 
+            this.tabAlarmHistory.Controls.Add(this.dgvAlarmHistory);
+            this.tabAlarmHistory.Location = new System.Drawing.Point(10, 63);
+            this.tabAlarmHistory.Name = "tabAlarmHistory";
+            this.tabAlarmHistory.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAlarmHistory.Size = new System.Drawing.Size(2116, 943);
+            this.tabAlarmHistory.TabIndex = 1;
+            this.tabAlarmHistory.Text = "报警历史";
+            this.tabAlarmHistory.UseVisualStyleBackColor = true;
+            // 
+            // dgvAlarmHistory
+            // 
+            this.dgvAlarmHistory.AllowUserToAddRows = false;
+            this.dgvAlarmHistory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvAlarmHistory.ColumnHeadersHeight = 58;
+            this.dgvAlarmHistory.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Time,
+            this.ErrorCode,
+            this.AlarmDescription,
+            this.AlarmSolution});
+            this.dgvAlarmHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvAlarmHistory.Font = new System.Drawing.Font("微软雅黑", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dgvAlarmHistory.Location = new System.Drawing.Point(3, 3);
+            this.dgvAlarmHistory.Name = "dgvAlarmHistory";
+            this.dgvAlarmHistory.ReadOnly = true;
+            this.dgvAlarmHistory.RowHeadersVisible = false;
+            this.dgvAlarmHistory.RowHeadersWidth = 102;
+            this.dgvAlarmHistory.RowTemplate.Height = 60;
+            this.dgvAlarmHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvAlarmHistory.Size = new System.Drawing.Size(2110, 937);
+            this.dgvAlarmHistory.TabIndex = 0;
+            // 
+            // tabDiagnosticTools
+            // 
+            this.tabDiagnosticTools.Controls.Add(this.panelDiagnostic);
+            this.tabDiagnosticTools.Location = new System.Drawing.Point(10, 63);
+            this.tabDiagnosticTools.Name = "tabDiagnosticTools";
+            this.tabDiagnosticTools.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDiagnosticTools.Size = new System.Drawing.Size(2116, 943);
+            this.tabDiagnosticTools.TabIndex = 2;
+            this.tabDiagnosticTools.Text = "诊断工具";
+            this.tabDiagnosticTools.UseVisualStyleBackColor = true;
+            // 
+            // panelDiagnostic
+            // 
+            this.panelDiagnostic.Controls.Add(this.txtPingResult);
+            this.panelDiagnostic.Controls.Add(this.btnPing);
+            this.panelDiagnostic.Controls.Add(this.txtIpAddress);
+            this.panelDiagnostic.Controls.Add(this.labelIpAddress);
+            this.panelDiagnostic.Controls.Add(this.labelDiagnosticTitle);
+            this.panelDiagnostic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelDiagnostic.Location = new System.Drawing.Point(3, 3);
+            this.panelDiagnostic.Name = "panelDiagnostic";
+            this.panelDiagnostic.Size = new System.Drawing.Size(2110, 937);
+            this.panelDiagnostic.TabIndex = 0;
+            // 
+            // txtPingResult
+            // 
+            this.txtPingResult.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPingResult.Location = new System.Drawing.Point(48, 165);
+            this.txtPingResult.Multiline = true;
+            this.txtPingResult.Name = "txtPingResult";
+            this.txtPingResult.ReadOnly = true;
+            this.txtPingResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtPingResult.Size = new System.Drawing.Size(1867, 747);
+            this.txtPingResult.TabIndex = 4;
+            // 
+            // btnPing
+            // 
+            this.btnPing.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnPing.Location = new System.Drawing.Point(711, 72);
+            this.btnPing.Name = "btnPing";
+            this.btnPing.Size = new System.Drawing.Size(120, 62);
+            this.btnPing.TabIndex = 3;
+            this.btnPing.Text = "Ping测试";
+            this.btnPing.UseVisualStyleBackColor = true;
+            // 
+            // txtIpAddress
+            // 
+            this.txtIpAddress.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtIpAddress.Location = new System.Drawing.Point(263, 77);
+            this.txtIpAddress.Name = "txtIpAddress";
+            this.txtIpAddress.Size = new System.Drawing.Size(409, 54);
+            this.txtIpAddress.TabIndex = 2;
+            // 
+            // labelIpAddress
+            // 
+            this.labelIpAddress.AutoSize = true;
+            this.labelIpAddress.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelIpAddress.Location = new System.Drawing.Point(50, 80);
+            this.labelIpAddress.Name = "labelIpAddress";
+            this.labelIpAddress.Size = new System.Drawing.Size(228, 46);
+            this.labelIpAddress.TabIndex = 1;
+            this.labelIpAddress.Text = "PLC IP地址：";
+            // 
+            // labelDiagnosticTitle
+            // 
+            this.labelDiagnosticTitle.AutoSize = true;
+            this.labelDiagnosticTitle.Font = new System.Drawing.Font("微软雅黑", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelDiagnosticTitle.Location = new System.Drawing.Point(30, 30);
+            this.labelDiagnosticTitle.Name = "labelDiagnosticTitle";
+            this.labelDiagnosticTitle.Size = new System.Drawing.Size(244, 50);
+            this.labelDiagnosticTitle.TabIndex = 0;
+            this.labelDiagnosticTitle.Text = "网络诊断工具";
+            // 
+            // Solution
+            // 
+            this.Solution.HeaderText = "解决方法";
+            this.Solution.MinimumWidth = 12;
+            this.Solution.Name = "Solution";
+            this.Solution.ReadOnly = true;
+            // 
+            // Cause
+            // 
+            this.Cause.HeaderText = "原因";
+            this.Cause.MinimumWidth = 12;
+            this.Cause.Name = "Cause";
+            this.Cause.ReadOnly = true;
+            // 
+            // Description
+            // 
+            this.Description.HeaderText = "描述";
+            this.Description.MinimumWidth = 12;
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            // 
+            // Code
+            // 
+            this.Code.HeaderText = "错误码";
+            this.Code.MinimumWidth = 12;
+            this.Code.Name = "Code";
+            this.Code.ReadOnly = true;
+            // 
+            // ErrorCodeLookupForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(21F, 46F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(2136, 1211);
+            this.Controls.Add(this.panelBottom);
+            this.Controls.Add(this.panelTop);
+            this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "ErrorCodeLookupForm";
-            this.Text = "错误码查询";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "错误码查询与诊断";
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
+            this.panelBottom.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
+            this.tabErrorCodeList.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvErrorCodeList)).EndInit();
+            this.tabAlarmHistory.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvAlarmHistory)).EndInit();
+            this.tabDiagnosticTools.ResumeLayout(false);
+            this.panelDiagnostic.ResumeLayout(false);
+            this.panelDiagnostic.PerformLayout();
             this.ResumeLayout(false);
+
         }
     }
 

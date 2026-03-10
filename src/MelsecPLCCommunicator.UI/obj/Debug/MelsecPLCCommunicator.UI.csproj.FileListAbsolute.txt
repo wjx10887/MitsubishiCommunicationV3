@@ -1,6 +1,3 @@
-D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\MelsecPLCCommunicator.UI.exe.config
-D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\MelsecPLCCommunicator.UI.exe
-D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\MelsecPLCCommunicator.UI.pdb
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\MelsecPLCCommunicator.UI.exe.config
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\MelsecPLCCommunicator.UI.exe
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\MelsecPLCCommunicator.UI.pdb
@@ -8,14 +5,17 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.csproj.SuggestedBindingRedirects.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.exe.config
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.ConnectionConfigForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.ConnectionMonitorForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.DeviceMonitorForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.ErrorCodeLookupForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.FrameAnalyzerForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.MainForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.csproj.GenerateResource.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.GeneratedMSBuildEditorConfig.editorconfig
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.AssemblyInfoInputs.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.AssemblyInfo.cs
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.csproj.CoreCompileInputs.cache
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.sourcelink.json
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPL.945E4CD1.Up2Date
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.exe
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.pdb
-D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.ConnectionMonitorForm.resources
-D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.sourcelink.json

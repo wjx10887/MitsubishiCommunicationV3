@@ -105,6 +105,29 @@ namespace MelsecPLCCommunicator.UI.Forms
         }
 
         /// <summary>
+        /// 更新参数配置界面布局
+        /// </summary>
+        private void UpdateParameterUILayout()
+        {
+            if (cmbInterfaceType.SelectedItem == null)
+                return;
+
+            string interfaceType = cmbInterfaceType.SelectedItem.ToString();
+            bool isEthernet = interfaceType.Contains("以太网");
+            bool isSerial = interfaceType.Contains("串口");
+
+            // 显示/隐藏网络参数
+            if (groupBoxNetwork != null)
+                groupBoxNetwork.Visible = isEthernet;
+            if (groupBoxSerial != null)
+                groupBoxSerial.Visible = isSerial;
+
+            // 显示高级参数
+            if (groupBoxAdvanced != null)
+                groupBoxAdvanced.Visible = true;
+        }
+
+        /// <summary>
         /// 更新连接名称
         /// </summary>
         private void UpdateConnectionName(object sender, EventArgs e)
@@ -380,44 +403,7 @@ namespace MelsecPLCCommunicator.UI.Forms
         /// </summary>
         private void UpdateParameterUI()
         {
-            if (cmbInterfaceType.SelectedItem == null)
-                return;
-
-            string interfaceType = cmbInterfaceType.SelectedItem.ToString();
-            bool isEthernet = interfaceType.Contains("以太网");
-            bool isSerial = interfaceType.Contains("串口");
-
-            // 显示/隐藏网络参数
-            if (groupBoxNetwork != null)
-                groupBoxNetwork.Visible = isEthernet;
-            if (groupBoxSerial != null)
-                groupBoxSerial.Visible = isSerial;
-
-            // 显示高级参数
-            if (groupBoxAdvanced != null)
-                groupBoxAdvanced.Visible = true;
-
-            // 调整控件位置
-            if (isEthernet)
-            {
-                // 网络接口布局
-                groupBoxNetwork.Location = new System.Drawing.Point(12, 168);
-                groupBoxAdvanced.Location = new System.Drawing.Point(12, 254);
-                btnTestConnection.Location = new System.Drawing.Point(12, 380);
-                btnOK.Location = new System.Drawing.Point(192, 380);
-                btnCancel.Location = new System.Drawing.Point(292, 380);
-                this.Height = 460;
-            }
-            else if (isSerial)
-            {
-                // 串口接口布局
-                groupBoxSerial.Location = new System.Drawing.Point(12, 168);
-                groupBoxAdvanced.Location = new System.Drawing.Point(12, 294);
-                btnTestConnection.Location = new System.Drawing.Point(12, 420);
-                btnOK.Location = new System.Drawing.Point(192, 420);
-                btnCancel.Location = new System.Drawing.Point(292, 420);
-                this.Height = 500;
-            }
+            UpdateParameterUILayout();
         }
 
         /// <summary>
@@ -738,6 +724,10 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.label6 = new System.Windows.Forms.Label();
             this.txtIpAddress = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.txtPcIpAddress = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.txtPcPort = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.groupBoxSerial = new System.Windows.Forms.GroupBox();
             this.cmbStopBits = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -781,11 +771,12 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.groupBoxBasic.Controls.Add(this.label12);
             this.groupBoxBasic.Controls.Add(this.txtConnectionName);
             this.groupBoxBasic.Controls.Add(this.label1);
-            this.groupBoxBasic.Location = new System.Drawing.Point(30, 30);
-            this.groupBoxBasic.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.groupBoxBasic.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.groupBoxBasic.Location = new System.Drawing.Point(60, 17);
+            this.groupBoxBasic.Margin = new System.Windows.Forms.Padding(8);
             this.groupBoxBasic.Name = "groupBoxBasic";
-            this.groupBoxBasic.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
-            this.groupBoxBasic.Size = new System.Drawing.Size(900, 375);
+            this.groupBoxBasic.Padding = new System.Windows.Forms.Padding(8);
+            this.groupBoxBasic.Size = new System.Drawing.Size(1052, 517);
             this.groupBoxBasic.TabIndex = 0;
             this.groupBoxBasic.TabStop = false;
             this.groupBoxBasic.Text = "基本配置";
@@ -793,85 +784,89 @@ namespace MelsecPLCCommunicator.UI.Forms
             // cmbProtocolType
             // 
             this.cmbProtocolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbProtocolType.Location = new System.Drawing.Point(275, 218);
-            this.cmbProtocolType.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbProtocolType.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cmbProtocolType.Location = new System.Drawing.Point(253, 266);
+            this.cmbProtocolType.Margin = new System.Windows.Forms.Padding(16);
             this.cmbProtocolType.Name = "cmbProtocolType";
-            this.cmbProtocolType.Size = new System.Drawing.Size(544, 38);
+            this.cmbProtocolType.Size = new System.Drawing.Size(623, 60);
             this.cmbProtocolType.TabIndex = 5;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(50, 225);
-            this.label3.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label3.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label3.Location = new System.Drawing.Point(32, 258);
+            this.label3.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(163, 30);
+            this.label3.Size = new System.Drawing.Size(222, 52);
             this.label3.TabIndex = 4;
             this.label3.Text = "协议类型：";
             // 
             // cmbInterfaceType
             // 
             this.cmbInterfaceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbInterfaceType.Location = new System.Drawing.Point(275, 142);
-            this.cmbInterfaceType.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbInterfaceType.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cmbInterfaceType.Location = new System.Drawing.Point(253, 174);
+            this.cmbInterfaceType.Margin = new System.Windows.Forms.Padding(16);
             this.cmbInterfaceType.Name = "cmbInterfaceType";
-            this.cmbInterfaceType.Size = new System.Drawing.Size(544, 38);
+            this.cmbInterfaceType.Size = new System.Drawing.Size(371, 60);
             this.cmbInterfaceType.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(50, 150);
-            this.label2.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label2.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.Location = new System.Drawing.Point(32, 166);
+            this.label2.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(163, 30);
+            this.label2.Size = new System.Drawing.Size(222, 52);
             this.label2.TabIndex = 2;
             this.label2.Text = "物理接口：";
             // 
             // cmbPlcSeries
             // 
             this.cmbPlcSeries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPlcSeries.Location = new System.Drawing.Point(275, 68);
-            this.cmbPlcSeries.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbPlcSeries.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cmbPlcSeries.Location = new System.Drawing.Point(253, 77);
+            this.cmbPlcSeries.Margin = new System.Windows.Forms.Padding(16);
             this.cmbPlcSeries.Name = "cmbPlcSeries";
-            this.cmbPlcSeries.Size = new System.Drawing.Size(544, 38);
+            this.cmbPlcSeries.Size = new System.Drawing.Size(371, 60);
             this.cmbPlcSeries.TabIndex = 9;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(50, 75);
-            this.label12.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label12.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label12.Location = new System.Drawing.Point(32, 69);
+            this.label12.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(148, 30);
+            this.label12.Size = new System.Drawing.Size(214, 52);
             this.label12.TabIndex = 8;
             this.label12.Text = "PLC系列：";
             // 
             // txtConnectionName
             // 
-            this.txtConnectionName.Location = new System.Drawing.Point(275, 292);
-            this.txtConnectionName.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtConnectionName.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtConnectionName.Location = new System.Drawing.Point(253, 358);
+            this.txtConnectionName.Margin = new System.Windows.Forms.Padding(16);
             this.txtConnectionName.Name = "txtConnectionName";
-            this.txtConnectionName.Size = new System.Drawing.Size(544, 42);
+            this.txtConnectionName.Size = new System.Drawing.Size(726, 60);
             this.txtConnectionName.TabIndex = 1;
             this.txtConnectionName.Text = "PLC连接";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(50, 300);
-            this.label1.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label1.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.Location = new System.Drawing.Point(32, 350);
+            this.label1.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(163, 30);
+            this.label1.Size = new System.Drawing.Size(222, 52);
             this.label1.TabIndex = 0;
             this.label1.Text = "连接名称：";
             // 
             // groupBoxNetwork
             // 
-            this.txtPcIpAddress = new System.Windows.Forms.TextBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.txtPcPort = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
             this.groupBoxNetwork.Controls.Add(this.txtPort);
             this.groupBoxNetwork.Controls.Add(this.label6);
             this.groupBoxNetwork.Controls.Add(this.txtIpAddress);
@@ -880,88 +875,97 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.groupBoxNetwork.Controls.Add(this.label19);
             this.groupBoxNetwork.Controls.Add(this.txtPcPort);
             this.groupBoxNetwork.Controls.Add(this.label20);
-            this.groupBoxNetwork.Location = new System.Drawing.Point(30, 420);
-            this.groupBoxNetwork.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.groupBoxNetwork.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.groupBoxNetwork.Location = new System.Drawing.Point(60, 558);
+            this.groupBoxNetwork.Margin = new System.Windows.Forms.Padding(16);
             this.groupBoxNetwork.Name = "groupBoxNetwork";
-            this.groupBoxNetwork.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
-            this.groupBoxNetwork.Size = new System.Drawing.Size(900, 200);
+            this.groupBoxNetwork.Padding = new System.Windows.Forms.Padding(16);
+            this.groupBoxNetwork.Size = new System.Drawing.Size(1091, 253);
             this.groupBoxNetwork.TabIndex = 1;
             this.groupBoxNetwork.TabStop = false;
             this.groupBoxNetwork.Text = "网络参数";
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(775, 68);
-            this.txtPort.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtPort.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtPort.Location = new System.Drawing.Point(906, 76);
+            this.txtPort.Margin = new System.Windows.Forms.Padding(16);
             this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(69, 42);
+            this.txtPort.Size = new System.Drawing.Size(153, 60);
             this.txtPort.TabIndex = 3;
             this.txtPort.Text = "6000";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(675, 75);
-            this.label6.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label6.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label6.Location = new System.Drawing.Point(695, 84);
+            this.label6.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(103, 30);
+            this.label6.Size = new System.Drawing.Size(142, 52);
             this.label6.TabIndex = 2;
             this.label6.Text = "端口：";
             // 
             // txtIpAddress
             // 
-            this.txtIpAddress.Location = new System.Drawing.Point(275, 68);
-            this.txtIpAddress.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtIpAddress.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtIpAddress.Location = new System.Drawing.Point(246, 76);
+            this.txtIpAddress.Margin = new System.Windows.Forms.Padding(16);
             this.txtIpAddress.Name = "txtIpAddress";
-            this.txtIpAddress.Size = new System.Drawing.Size(369, 42);
+            this.txtIpAddress.Size = new System.Drawing.Size(382, 60);
             this.txtIpAddress.TabIndex = 1;
             this.txtIpAddress.Text = "192.168.1.100";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(50, 75);
-            this.label5.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label5.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label5.Location = new System.Drawing.Point(13, 79);
+            this.label5.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(133, 30);
+            this.label5.Size = new System.Drawing.Size(178, 52);
             this.label5.TabIndex = 0;
             this.label5.Text = "IP地址：";
             // 
             // txtPcIpAddress
             // 
-            this.txtPcIpAddress.Location = new System.Drawing.Point(275, 142);
-            this.txtPcIpAddress.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtPcIpAddress.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtPcIpAddress.Location = new System.Drawing.Point(250, 158);
+            this.txtPcIpAddress.Margin = new System.Windows.Forms.Padding(16);
             this.txtPcIpAddress.Name = "txtPcIpAddress";
-            this.txtPcIpAddress.Size = new System.Drawing.Size(369, 42);
+            this.txtPcIpAddress.Size = new System.Drawing.Size(382, 60);
             this.txtPcIpAddress.TabIndex = 4;
             this.txtPcIpAddress.Text = "192.168.1.100";
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(50, 150);
-            this.label19.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label19.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label19.Location = new System.Drawing.Point(13, 161);
+            this.label19.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(163, 30);
+            this.label19.Size = new System.Drawing.Size(178, 52);
             this.label19.TabIndex = 5;
             this.label19.Text = "本地IP：";
             // 
             // txtPcPort
             // 
-            this.txtPcPort.Location = new System.Drawing.Point(775, 142);
-            this.txtPcPort.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtPcPort.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtPcPort.Location = new System.Drawing.Point(906, 160);
+            this.txtPcPort.Margin = new System.Windows.Forms.Padding(16);
             this.txtPcPort.Name = "txtPcPort";
-            this.txtPcPort.Size = new System.Drawing.Size(69, 42);
+            this.txtPcPort.Size = new System.Drawing.Size(153, 60);
             this.txtPcPort.TabIndex = 6;
             this.txtPcPort.Text = "3000";
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(675, 150);
-            this.label20.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label20.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label20.Location = new System.Drawing.Point(682, 166);
+            this.label20.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(133, 30);
+            this.label20.Size = new System.Drawing.Size(222, 52);
             this.label20.TabIndex = 7;
             this.label20.Text = "本地端口：";
             // 
@@ -977,11 +981,12 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.groupBoxSerial.Controls.Add(this.label8);
             this.groupBoxSerial.Controls.Add(this.cmbPortName);
             this.groupBoxSerial.Controls.Add(this.label7);
-            this.groupBoxSerial.Location = new System.Drawing.Point(30, 495);
-            this.groupBoxSerial.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.groupBoxSerial.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.groupBoxSerial.Location = new System.Drawing.Point(60, 558);
+            this.groupBoxSerial.Margin = new System.Windows.Forms.Padding(16);
             this.groupBoxSerial.Name = "groupBoxSerial";
-            this.groupBoxSerial.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
-            this.groupBoxSerial.Size = new System.Drawing.Size(900, 300);
+            this.groupBoxSerial.Padding = new System.Windows.Forms.Padding(16);
+            this.groupBoxSerial.Size = new System.Drawing.Size(1012, 360);
             this.groupBoxSerial.TabIndex = 2;
             this.groupBoxSerial.TabStop = false;
             this.groupBoxSerial.Text = "串口参数";
@@ -989,111 +994,121 @@ namespace MelsecPLCCommunicator.UI.Forms
             // cmbStopBits
             // 
             this.cmbStopBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStopBits.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cmbStopBits.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.cmbStopBits.Location = new System.Drawing.Point(650, 218);
-            this.cmbStopBits.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbStopBits.Location = new System.Drawing.Point(690, 269);
+            this.cmbStopBits.Margin = new System.Windows.Forms.Padding(16);
             this.cmbStopBits.Name = "cmbStopBits";
-            this.cmbStopBits.Size = new System.Drawing.Size(169, 38);
+            this.cmbStopBits.Size = new System.Drawing.Size(172, 60);
             this.cmbStopBits.TabIndex = 9;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(425, 225);
-            this.label11.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label11.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label11.Location = new System.Drawing.Point(513, 269);
+            this.label11.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(133, 30);
+            this.label11.Size = new System.Drawing.Size(182, 52);
             this.label11.TabIndex = 8;
             this.label11.Text = "停止位：";
             // 
             // cmbDataBits
             // 
             this.cmbDataBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDataBits.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cmbDataBits.Items.AddRange(new object[] {
             "7",
             "8"});
-            this.cmbDataBits.Location = new System.Drawing.Point(275, 218);
-            this.cmbDataBits.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbDataBits.Location = new System.Drawing.Point(213, 255);
+            this.cmbDataBits.Margin = new System.Windows.Forms.Padding(16);
             this.cmbDataBits.Name = "cmbDataBits";
-            this.cmbDataBits.Size = new System.Drawing.Size(119, 38);
+            this.cmbDataBits.Size = new System.Drawing.Size(238, 60);
             this.cmbDataBits.TabIndex = 7;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(50, 225);
-            this.label10.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label10.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label10.Location = new System.Drawing.Point(13, 255);
+            this.label10.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(133, 30);
+            this.label10.Size = new System.Drawing.Size(182, 52);
             this.label10.TabIndex = 6;
             this.label10.Text = "数据位：";
             // 
             // cmbParity
             // 
             this.cmbParity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbParity.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cmbParity.Items.AddRange(new object[] {
             "None",
             "Odd",
             "Even"});
-            this.cmbParity.Location = new System.Drawing.Point(650, 142);
-            this.cmbParity.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbParity.Location = new System.Drawing.Point(705, 163);
+            this.cmbParity.Margin = new System.Windows.Forms.Padding(16);
             this.cmbParity.Name = "cmbParity";
-            this.cmbParity.Size = new System.Drawing.Size(169, 38);
+            this.cmbParity.Size = new System.Drawing.Size(157, 60);
             this.cmbParity.TabIndex = 5;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(550, 150);
-            this.label9.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label9.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label9.Location = new System.Drawing.Point(577, 166);
+            this.label9.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(103, 30);
+            this.label9.Size = new System.Drawing.Size(142, 52);
             this.label9.TabIndex = 4;
             this.label9.Text = "校验：";
             // 
             // cmbBaudRate
             // 
             this.cmbBaudRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBaudRate.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cmbBaudRate.Items.AddRange(new object[] {
             "9600",
             "19200",
             "38400",
             "57600",
             "115200"});
-            this.cmbBaudRate.Location = new System.Drawing.Point(275, 142);
-            this.cmbBaudRate.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbBaudRate.Location = new System.Drawing.Point(213, 163);
+            this.cmbBaudRate.Margin = new System.Windows.Forms.Padding(16);
             this.cmbBaudRate.Name = "cmbBaudRate";
-            this.cmbBaudRate.Size = new System.Drawing.Size(244, 38);
+            this.cmbBaudRate.Size = new System.Drawing.Size(238, 60);
             this.cmbBaudRate.TabIndex = 3;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(50, 150);
-            this.label8.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label8.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.Location = new System.Drawing.Point(13, 166);
+            this.label8.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(133, 30);
+            this.label8.Size = new System.Drawing.Size(182, 52);
             this.label8.TabIndex = 2;
             this.label8.Text = "波特率：";
             // 
             // cmbPortName
             // 
             this.cmbPortName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPortName.Location = new System.Drawing.Point(275, 68);
-            this.cmbPortName.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.cmbPortName.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cmbPortName.Location = new System.Drawing.Point(213, 84);
+            this.cmbPortName.Margin = new System.Windows.Forms.Padding(16);
             this.cmbPortName.Name = "cmbPortName";
-            this.cmbPortName.Size = new System.Drawing.Size(544, 38);
+            this.cmbPortName.Size = new System.Drawing.Size(303, 60);
             this.cmbPortName.TabIndex = 1;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(50, 75);
-            this.label7.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label7.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label7.Location = new System.Drawing.Point(13, 84);
+            this.label7.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(163, 30);
+            this.label7.Size = new System.Drawing.Size(222, 52);
             this.label7.TabIndex = 0;
             this.label7.Text = "串口名称：";
             // 
@@ -1111,39 +1126,43 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.groupBoxAdvanced.Controls.Add(this.label14);
             this.groupBoxAdvanced.Controls.Add(this.txtNetworkNumber);
             this.groupBoxAdvanced.Controls.Add(this.label13);
-            this.groupBoxAdvanced.Location = new System.Drawing.Point(30, 810);
-            this.groupBoxAdvanced.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.groupBoxAdvanced.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.groupBoxAdvanced.Location = new System.Drawing.Point(62, 933);
+            this.groupBoxAdvanced.Margin = new System.Windows.Forms.Padding(16);
             this.groupBoxAdvanced.Name = "groupBoxAdvanced";
-            this.groupBoxAdvanced.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
-            this.groupBoxAdvanced.Size = new System.Drawing.Size(900, 300);
+            this.groupBoxAdvanced.Padding = new System.Windows.Forms.Padding(16);
+            this.groupBoxAdvanced.Size = new System.Drawing.Size(1010, 354);
             this.groupBoxAdvanced.TabIndex = 6;
             this.groupBoxAdvanced.TabStop = false;
             this.groupBoxAdvanced.Text = "高级参数";
             // 
             // txtReconnectInterval
             // 
-            this.txtReconnectInterval.Location = new System.Drawing.Point(650, 218);
-            this.txtReconnectInterval.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtReconnectInterval.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtReconnectInterval.Location = new System.Drawing.Point(710, 252);
+            this.txtReconnectInterval.Margin = new System.Windows.Forms.Padding(16);
             this.txtReconnectInterval.Name = "txtReconnectInterval";
-            this.txtReconnectInterval.Size = new System.Drawing.Size(119, 42);
+            this.txtReconnectInterval.Size = new System.Drawing.Size(238, 60);
             this.txtReconnectInterval.TabIndex = 11;
             this.txtReconnectInterval.Text = "5000";
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(425, 225);
-            this.label18.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label18.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label18.Location = new System.Drawing.Point(490, 260);
+            this.label18.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(163, 30);
+            this.label18.Size = new System.Drawing.Size(222, 52);
             this.label18.TabIndex = 10;
             this.label18.Text = "重连间隔：";
             // 
             // chkAutoReconnect
             // 
             this.chkAutoReconnect.AutoSize = true;
-            this.chkAutoReconnect.Location = new System.Drawing.Point(275, 225);
-            this.chkAutoReconnect.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.chkAutoReconnect.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.chkAutoReconnect.Location = new System.Drawing.Point(225, 273);
+            this.chkAutoReconnect.Margin = new System.Windows.Forms.Padding(16);
             this.chkAutoReconnect.Name = "chkAutoReconnect";
             this.chkAutoReconnect.Size = new System.Drawing.Size(34, 33);
             this.chkAutoReconnect.TabIndex = 9;
@@ -1152,93 +1171,103 @@ namespace MelsecPLCCommunicator.UI.Forms
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(50, 225);
-            this.label17.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label17.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label17.Location = new System.Drawing.Point(8, 260);
+            this.label17.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(163, 30);
+            this.label17.Size = new System.Drawing.Size(222, 52);
             this.label17.TabIndex = 8;
             this.label17.Text = "自动重连：";
             // 
             // txtReceiveTimeout
             // 
-            this.txtReceiveTimeout.Location = new System.Drawing.Point(650, 142);
-            this.txtReceiveTimeout.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtReceiveTimeout.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtReceiveTimeout.Location = new System.Drawing.Point(710, 165);
+            this.txtReceiveTimeout.Margin = new System.Windows.Forms.Padding(16);
             this.txtReceiveTimeout.Name = "txtReceiveTimeout";
-            this.txtReceiveTimeout.Size = new System.Drawing.Size(119, 42);
+            this.txtReceiveTimeout.Size = new System.Drawing.Size(238, 60);
             this.txtReceiveTimeout.TabIndex = 7;
             this.txtReceiveTimeout.Text = "3000";
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(425, 150);
-            this.label16.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label16.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label16.Location = new System.Drawing.Point(490, 175);
+            this.label16.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(163, 30);
+            this.label16.Size = new System.Drawing.Size(222, 52);
             this.label16.TabIndex = 6;
             this.label16.Text = "接收超时：";
             // 
             // txtConnectionTimeout
             // 
-            this.txtConnectionTimeout.Location = new System.Drawing.Point(275, 142);
-            this.txtConnectionTimeout.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtConnectionTimeout.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtConnectionTimeout.Location = new System.Drawing.Point(203, 172);
+            this.txtConnectionTimeout.Margin = new System.Windows.Forms.Padding(16);
             this.txtConnectionTimeout.Name = "txtConnectionTimeout";
-            this.txtConnectionTimeout.Size = new System.Drawing.Size(119, 42);
+            this.txtConnectionTimeout.Size = new System.Drawing.Size(238, 60);
             this.txtConnectionTimeout.TabIndex = 5;
             this.txtConnectionTimeout.Text = "3000";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(50, 150);
-            this.label15.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label15.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label15.Location = new System.Drawing.Point(8, 175);
+            this.label15.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(163, 30);
+            this.label15.Size = new System.Drawing.Size(222, 52);
             this.label15.TabIndex = 4;
             this.label15.Text = "连接超时：";
             // 
             // txtStationNumber
             // 
-            this.txtStationNumber.Location = new System.Drawing.Point(650, 68);
-            this.txtStationNumber.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtStationNumber.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtStationNumber.Location = new System.Drawing.Point(710, 81);
+            this.txtStationNumber.Margin = new System.Windows.Forms.Padding(16);
             this.txtStationNumber.Name = "txtStationNumber";
-            this.txtStationNumber.Size = new System.Drawing.Size(119, 42);
+            this.txtStationNumber.Size = new System.Drawing.Size(238, 60);
             this.txtStationNumber.TabIndex = 3;
             this.txtStationNumber.Text = "0";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(425, 75);
-            this.label14.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label14.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label14.Location = new System.Drawing.Point(490, 89);
+            this.label14.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(103, 30);
+            this.label14.Size = new System.Drawing.Size(142, 52);
             this.label14.TabIndex = 2;
             this.label14.Text = "站号：";
             // 
             // txtNetworkNumber
             // 
-            this.txtNetworkNumber.Location = new System.Drawing.Point(275, 68);
-            this.txtNetworkNumber.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.txtNetworkNumber.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtNetworkNumber.Location = new System.Drawing.Point(203, 81);
+            this.txtNetworkNumber.Margin = new System.Windows.Forms.Padding(16);
             this.txtNetworkNumber.Name = "txtNetworkNumber";
-            this.txtNetworkNumber.Size = new System.Drawing.Size(119, 42);
+            this.txtNetworkNumber.Size = new System.Drawing.Size(238, 60);
             this.txtNetworkNumber.TabIndex = 1;
             this.txtNetworkNumber.Text = "0";
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(50, 75);
-            this.label13.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label13.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label13.Location = new System.Drawing.Point(8, 89);
+            this.label13.Margin = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(133, 30);
+            this.label13.Size = new System.Drawing.Size(182, 52);
             this.label13.TabIndex = 0;
             this.label13.Text = "网络号：";
             // 
             // btnTestConnection
             // 
-            this.btnTestConnection.Location = new System.Drawing.Point(30, 1125);
-            this.btnTestConnection.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.btnTestConnection.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnTestConnection.Location = new System.Drawing.Point(62, 1329);
+            this.btnTestConnection.Margin = new System.Windows.Forms.Padding(16);
             this.btnTestConnection.Name = "btnTestConnection";
             this.btnTestConnection.Size = new System.Drawing.Size(250, 75);
             this.btnTestConnection.TabIndex = 3;
@@ -1247,10 +1276,11 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(480, 1125);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.btnOK.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnOK.Location = new System.Drawing.Point(515, 1329);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(16);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(200, 75);
+            this.btnOK.Size = new System.Drawing.Size(250, 75);
             this.btnOK.TabIndex = 4;
             this.btnOK.Text = "确定";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -1258,10 +1288,11 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(730, 1125);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.btnCancel.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnCancel.Location = new System.Drawing.Point(807, 1329);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(16);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(200, 75);
+            this.btnCancel.Size = new System.Drawing.Size(250, 75);
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "关闭窗口";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -1269,9 +1300,9 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // ConnectionConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 30F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(24F, 52F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(960, 1225);
+            this.ClientSize = new System.Drawing.Size(1168, 1449);
             this.Controls.Add(this.groupBoxAdvanced);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
@@ -1279,8 +1310,9 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.Controls.Add(this.groupBoxSerial);
             this.Controls.Add(this.groupBoxNetwork);
             this.Controls.Add(this.groupBoxBasic);
+            this.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.Margin = new System.Windows.Forms.Padding(16);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ConnectionConfigForm";

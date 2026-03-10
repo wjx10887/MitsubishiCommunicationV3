@@ -131,8 +131,8 @@
         "net472": {
           "targetAlias": "net472",
           "projectReferences": {
-            "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
-              "projectPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
+            "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
+              "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
             }
           }
         }

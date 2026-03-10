@@ -528,11 +528,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
+      "projectUniqueName": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
       "projectName": "MelsecPLCCommunicator.UI",
-      "projectPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
+      "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\obj\\",
+      "outputPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -551,8 +551,8 @@
             "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Application\\MelsecPLCCommunicator.Application.csproj": {
               "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Application\\MelsecPLCCommunicator.Application.csproj"
             },
-            "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
-              "projectPath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
+            "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj": {
+              "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Domain\\MelsecPLCCommunicator.Domain.csproj"
             },
             "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj": {
               "projectPath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.Infrastructure\\MelsecPLCCommunicator.Infrastructure.csproj"

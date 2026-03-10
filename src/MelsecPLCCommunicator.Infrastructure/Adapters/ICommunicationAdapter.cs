@@ -91,7 +91,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// <param name="localPort">本地端口</param>
         /// <param name="logService">日志服务</param>
         /// <returns>通信适配器</returns>
-        ICommunicationAdapter CreateNetworkAdapter(string ipAddress, int port, string protocolType, string localIpAddress = "192.168.1.100", int localPort = 3000, object logService = null);
+        ICommunicationAdapter CreateNetworkAdapter(string ipAddress, int port, string protocolType, string localIpAddress , int localPort , object logService = null);
 
         /// <summary>
         /// 创建串口通信适配器

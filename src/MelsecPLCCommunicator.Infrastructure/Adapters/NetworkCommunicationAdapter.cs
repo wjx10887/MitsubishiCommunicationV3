@@ -204,22 +204,24 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                 {
                                     _plcUdp.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
                                     // 尝试设置套接字选项，允许端口重用
-                                    try
-                                    {
-                                        var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                                        if (socketField != null)
+                                        /*
+                                        try
                                         {
-                                            var socket = socketField.GetValue(_plcUdp) as System.Net.Sockets.Socket;
-                                            if (socket != null)
+                                            var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                            if (socketField != null)
                                             {
-                                                socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                                var socket = socketField.GetValue(_plcUdp) as System.Net.Sockets.Socket;
+                                                if (socket != null)
+                                                {
+                                                    socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel.Socket, System.Net.Sockets.SocketOptionName.ReuseAddress, true);
+                                                }
                                             }
                                         }
-                                    }
-                                    catch (Exception socketEx)
-                                    {
-                                        _logNet?.WriteException("设置套接字选项失败", socketEx);
-                                    }
+                                        catch (Exception socketEx)
+                                        {
+                                            _logNet?.WriteException("设置套接字选项失败", socketEx);
+                                        }
+                                        */
                                 }
                                 else
                                 {
@@ -261,6 +263,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                 {
                                     _plcUdpAscii.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
                                     // 尝试设置套接字选项，允许端口重用
+                                    /*
                                     try
                                     {
                                         var socketField = _plcUdpAscii.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -277,6 +280,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                     {
                                         _logNet?.WriteException("设置套接字选项失败", socketEx);
                                     }
+                                    */
                                 }
                                 else
                                 {
@@ -351,13 +355,13 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                     // 释放UDP连接
             if (_plcUdp != null)
             {
-                // UDP 实例无需显式 Dispose，置空即可
-                _plcUdp = null; 
+                // UDP 实例需要手动调用 ConnectClose() 方法显式关闭连接
+                _plcUdp.ConnectClose();
             }
             if (_plcUdpAscii != null)
             {
-                // UDP 实例无需显式 Dispose，置空即可
-                _plcUdpAscii = null;
+                // UDP 实例需要手动调用 ConnectClose() 方法显式关闭连接
+                _plcUdpAscii.ConnectClose();
             }
             _isConnected = false;
         }
@@ -413,6 +417,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                     {
                                         _plcUdp.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
                                         // 尝试设置套接字选项，允许端口重用
+                                        /*
                                         try
                                         {
                                             var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -430,6 +435,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                             _logNet?.WriteException("设置套接字选项失败", socketEx);
                                             // _logService?.Error("设置套接字选项失败", socketEx);
                                         }
+                                        */
                                     }
                                     else
                                     {
@@ -446,9 +452,9 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                 }
                             }
                             catch (Exception bindEx)
-                        {
-                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
-                        }
+                            {
+                                _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                            }
                             // 如果是最后一次尝试，直接抛出异常
                             if (retry == 2)
                             {
@@ -492,6 +498,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                     {
                                         _plcUdpAscii.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
                                         // 尝试设置套接字选项，允许端口重用
+                                        /*
                                         try
                                         {
                                             var socketField = _plcUdpAscii.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -509,6 +516,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                             _logNet?.WriteException("设置套接字选项失败", socketEx);
                                             // _logService?.Error("设置套接字选项失败", socketEx);
                                         }
+                                        */
                                     }
                                     else
                                     {
@@ -525,9 +533,9 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                 }
                             }
                             catch (Exception bindEx)
-                        {
-                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
-                        }
+                            {
+                                _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                            }
                             // 如果是最后一次尝试，直接抛出异常
                             if (retry == 2)
                             {
@@ -1049,6 +1057,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                     {
                                         _plcUdp.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
                                         // 尝试设置套接字选项，允许端口重用
+                                        /*
                                         try
                                         {
                                             var socketField = _plcUdp.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -1066,6 +1075,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                             _logNet?.WriteException("设置套接字选项失败", socketEx);
                                             // _logService?.Error("设置套接字选项失败", socketEx);
                                         }
+                                        */
                                     }
                                     else
                                     {
@@ -1082,9 +1092,9 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                 }
                             }
                             catch (Exception bindEx)
-                        {
-                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
-                        }
+                            {
+                                _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                            }
                                 // 如果是最后一次尝试，直接返回失败
                                 if (retry == 2)
                                 {
@@ -1129,6 +1139,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                     {
                                         _plcUdpAscii.LocalBinding = new System.Net.IPEndPoint(localIp, _localPort);
                                         // 尝试设置套接字选项，允许端口重用
+                                        /*
                                         try
                                         {
                                             var socketField = _plcUdpAscii.GetType().GetField("socket", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -1146,6 +1157,7 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                             _logNet?.WriteException("设置套接字选项失败", socketEx);
                                             // _logService?.Error("设置套接字选项失败", socketEx);
                                         }
+                                        */
                                     }
                                     else
                                     {
@@ -1162,9 +1174,9 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                                 }
                             }
                             catch (Exception bindEx)
-                        {
-                            _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
-                        }
+                            {
+                                _logNet?.WriteException("设置UDP本地绑定失败", bindEx);
+                            }
                                 // 如果是最后一次尝试，直接返回失败
                                 if (retry == 2)
                                 {

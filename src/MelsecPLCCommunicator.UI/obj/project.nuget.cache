@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GC8PO5/uX/Y=",
+  "dgSpecHash": "uKi55cOBgQQ=",
   "success": true,
-  "projectFilePath": "d:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
+  "projectFilePath": "D:\\BaiduSyncdisk\\编程项目\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Administrator\\.nuget\\packages\\hslcommunication\\12.6.3\\hslcommunication.12.6.3.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
