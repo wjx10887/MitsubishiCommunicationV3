@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using MelsecPLCCommunicator.Domain.Enums;
 using MelsecPLCCommunicator.Domain.Shared;
@@ -9,6 +10,10 @@ namespace MelsecPLCCommunicator.Application.Interfaces
     /// </summary>
     public interface IPlcReadWriteService
     {
+        /// <summary>
+        /// 批量读取数据完成事件
+        /// </summary>
+        event EventHandler<BatchReadCompletedEventArgs> BatchReadCompleted;
         /// <summary>
         /// 读取数据
         /// </summary>
@@ -82,5 +87,31 @@ namespace MelsecPLCCommunicator.Application.Interfaces
         /// 值
         /// </summary>
         public object Value { get; set; }
+    }
+
+    /// <summary>
+    /// 批量读取完成事件参数
+    /// </summary>
+    public class BatchReadCompletedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// 读取请求
+        /// </summary>
+        public BatchReadRequest[] Requests { get; set; }
+
+        /// <summary>
+        /// 读取结果
+        /// </summary>
+        public object[] Results { get; set; }
+
+        /// <summary>
+        /// 是否成功
+        /// </summary>
+        public bool Success { get; set; }
+
+        /// <summary>
+        /// 错误信息
+        /// </summary>
+        public string ErrorMessage { get; set; }
     }
 }

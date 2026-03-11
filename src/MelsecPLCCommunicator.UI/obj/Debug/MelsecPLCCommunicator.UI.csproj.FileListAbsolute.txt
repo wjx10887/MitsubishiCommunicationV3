@@ -1,3 +1,4 @@
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\appsettings.json
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\MelsecPLCCommunicator.UI.exe.config
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\MelsecPLCCommunicator.UI.exe
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\bin\Debug\MelsecPLCCommunicator.UI.pdb
@@ -9,7 +10,9 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.DeviceMonitorForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.ErrorCodeLookupForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.FrameAnalyzerForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.HistoryQueryForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Forms.MainForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.Properties.Resources.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.csproj.GenerateResource.cache
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.GeneratedMSBuildEditorConfig.editorconfig
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Debug\MelsecPLCCommunicator.UI.AssemblyInfoInputs.cache

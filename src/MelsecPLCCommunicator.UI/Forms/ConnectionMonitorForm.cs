@@ -23,8 +23,11 @@ namespace MelsecPLCCommunicator.UI.Forms
         private void InitializeUI()
         {
             this.Text = "连接监控";
-            this.Size = new System.Drawing.Size(1600, 1000);
+            this.Size = new System.Drawing.Size(800, 600);
             this.StartPosition = FormStartPosition.CenterParent;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
 
             // 创建面板
             var panelMain = new Panel
@@ -44,10 +47,10 @@ namespace MelsecPLCCommunicator.UI.Forms
                 Dock = DockStyle.Fill,
                 AutoGenerateColumns = false,
                 RowHeadersWidth = 60,
-                Font = new System.Drawing.Font("微软雅黑", 11.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134))),
+                Font = new System.Drawing.Font("微软雅黑", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134))),
                 ColumnHeadersDefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle
                 {
-                    Font = new System.Drawing.Font("微软雅黑", 11.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134))),
+                    Font = new System.Drawing.Font("微软雅黑", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134))),
                     BackColor = System.Drawing.Color.LightSteelBlue,
                     ForeColor = System.Drawing.Color.DarkBlue
                 },
@@ -56,7 +59,7 @@ namespace MelsecPLCCommunicator.UI.Forms
                     BackColor = System.Drawing.Color.LightCyan
                 }
             };
-            dgvConnections.RowTemplate.Height = 45;
+            dgvConnections.RowTemplate.Height = 40;
             dgvConnections.Columns.Add("ConnectionName", "连接名称");
             dgvConnections.Columns.Add("ConnectionType", "连接方式");
             dgvConnections.Columns.Add("PlcSeries", "PLC系列");
@@ -67,14 +70,14 @@ namespace MelsecPLCCommunicator.UI.Forms
             dgvConnections.Columns.Add("AlarmCode", "报警代码");
 
             // 设置列宽
-            dgvConnections.Columns["ConnectionName"].Width = 200;
-            dgvConnections.Columns["ConnectionType"].Width = 150;
-            dgvConnections.Columns["PlcSeries"].Width = 120;
-            dgvConnections.Columns["Protocol"].Width = 150;
-            dgvConnections.Columns["Address"].Width = 200;
-            dgvConnections.Columns["Port"].Width = 100;
-            dgvConnections.Columns["Status"].Width = 120;
-            dgvConnections.Columns["AlarmCode"].Width = 120;
+            dgvConnections.Columns["ConnectionName"].Width = 100;
+            dgvConnections.Columns["ConnectionType"].Width = 80;
+            dgvConnections.Columns["PlcSeries"].Width = 70;
+            dgvConnections.Columns["Protocol"].Width = 120;
+            dgvConnections.Columns["Address"].Width = 100;
+            dgvConnections.Columns["Port"].Width = 60;
+            dgvConnections.Columns["Status"].Width = 80;
+            dgvConnections.Columns["AlarmCode"].Width = 70;
 
             groupBoxConnections.Controls.Add(dgvConnections);
             panelMain.Controls.Add(groupBoxConnections);
@@ -177,7 +180,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // ConnectionMonitorForm
             // 
-            this.ClientSize = new System.Drawing.Size(1389, 744);
+            this.ClientSize = new System.Drawing.Size(716, 196);
             this.Name = "ConnectionMonitorForm";
             this.Text = "连接监控";
             this.ResumeLayout(false);

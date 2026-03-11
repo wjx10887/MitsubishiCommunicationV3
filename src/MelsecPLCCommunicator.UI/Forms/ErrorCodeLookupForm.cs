@@ -250,6 +250,10 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabErrorCodeList = new System.Windows.Forms.TabPage();
             this.dgvErrorCodeList = new System.Windows.Forms.DataGridView();
+            this.Code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cause = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Solution = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabAlarmHistory = new System.Windows.Forms.TabPage();
             this.dgvAlarmHistory = new System.Windows.Forms.DataGridView();
             this.tabDiagnosticTools = new System.Windows.Forms.TabPage();
@@ -259,10 +263,6 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.txtIpAddress = new System.Windows.Forms.TextBox();
             this.labelIpAddress = new System.Windows.Forms.Label();
             this.labelDiagnosticTitle = new System.Windows.Forms.Label();
-            this.Solution = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Cause = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -312,36 +312,39 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(2136, 195);
+            this.panelTop.Size = new System.Drawing.Size(961, 143);
             this.panelTop.TabIndex = 0;
             // 
             // txtDescription
             // 
+            this.txtDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDescription.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.txtDescription.Location = new System.Drawing.Point(196, 107);
+            this.txtDescription.Location = new System.Drawing.Point(196, 69);
             this.txtDescription.Multiline = true;
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.ReadOnly = true;
             this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDescription.Size = new System.Drawing.Size(1050, 51);
+            this.txtDescription.Size = new System.Drawing.Size(753, 51);
             this.txtDescription.TabIndex = 4;
             // 
             // labelDescription
             // 
             this.labelDescription.AutoSize = true;
             this.labelDescription.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelDescription.Location = new System.Drawing.Point(30, 110);
+            this.labelDescription.Location = new System.Drawing.Point(30, 72);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(195, 46);
+            this.labelDescription.Size = new System.Drawing.Size(79, 20);
             this.labelDescription.TabIndex = 3;
             this.labelDescription.Text = "详细信息：";
             // 
             // btnLookup
             // 
             this.btnLookup.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnLookup.Location = new System.Drawing.Point(565, 12);
+            this.btnLookup.Location = new System.Drawing.Point(573, 12);
             this.btnLookup.Name = "btnLookup";
-            this.btnLookup.Size = new System.Drawing.Size(120, 67);
+            this.btnLookup.Size = new System.Drawing.Size(110, 38);
             this.btnLookup.TabIndex = 2;
             this.btnLookup.Text = "查询";
             this.btnLookup.UseVisualStyleBackColor = true;
@@ -351,7 +354,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.txtErrorCode.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtErrorCode.Location = new System.Drawing.Point(196, 22);
             this.txtErrorCode.Name = "txtErrorCode";
-            this.txtErrorCode.Size = new System.Drawing.Size(300, 54);
+            this.txtErrorCode.Size = new System.Drawing.Size(300, 26);
             this.txtErrorCode.TabIndex = 1;
             // 
             // labelErrorCode
@@ -360,7 +363,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.labelErrorCode.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelErrorCode.Location = new System.Drawing.Point(30, 30);
             this.labelErrorCode.Name = "labelErrorCode";
-            this.labelErrorCode.Size = new System.Drawing.Size(160, 46);
+            this.labelErrorCode.Size = new System.Drawing.Size(65, 20);
             this.labelErrorCode.TabIndex = 0;
             this.labelErrorCode.Text = "错误码：";
             // 
@@ -368,31 +371,33 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             this.panelBottom.Controls.Add(this.tabControl);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(0, 195);
+            this.panelBottom.Location = new System.Drawing.Point(0, 143);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(2136, 1016);
+            this.panelBottom.Size = new System.Drawing.Size(961, 426);
             this.panelBottom.TabIndex = 1;
             // 
             // tabControl
             // 
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabErrorCodeList);
             this.tabControl.Controls.Add(this.tabAlarmHistory);
             this.tabControl.Controls.Add(this.tabDiagnosticTools);
-            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.tabControl.Location = new System.Drawing.Point(0, 0);
+            this.tabControl.Location = new System.Drawing.Point(3, 6);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(2136, 1016);
+            this.tabControl.Size = new System.Drawing.Size(958, 420);
             this.tabControl.TabIndex = 0;
             // 
             // tabErrorCodeList
             // 
             this.tabErrorCodeList.Controls.Add(this.dgvErrorCodeList);
-            this.tabErrorCodeList.Location = new System.Drawing.Point(10, 63);
+            this.tabErrorCodeList.Location = new System.Drawing.Point(4, 29);
             this.tabErrorCodeList.Name = "tabErrorCodeList";
             this.tabErrorCodeList.Padding = new System.Windows.Forms.Padding(3);
-            this.tabErrorCodeList.Size = new System.Drawing.Size(2116, 943);
+            this.tabErrorCodeList.Size = new System.Drawing.Size(950, 387);
             this.tabErrorCodeList.TabIndex = 0;
             this.tabErrorCodeList.Text = "错误码列表";
             this.tabErrorCodeList.UseVisualStyleBackColor = true;
@@ -400,32 +405,62 @@ namespace MelsecPLCCommunicator.UI.Forms
             // dgvErrorCodeList
             // 
             this.dgvErrorCodeList.AllowUserToAddRows = false;
+            this.dgvErrorCodeList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvErrorCodeList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvErrorCodeList.ColumnHeadersHeight = 58;
+            this.dgvErrorCodeList.ColumnHeadersHeight = 30;
             this.dgvErrorCodeList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Code,
             this.Description,
             this.Cause,
             this.Solution});
-            this.dgvErrorCodeList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvErrorCodeList.Font = new System.Drawing.Font("微软雅黑", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.dgvErrorCodeList.Location = new System.Drawing.Point(3, 3);
+            this.dgvErrorCodeList.Location = new System.Drawing.Point(6, 6);
             this.dgvErrorCodeList.Name = "dgvErrorCodeList";
             this.dgvErrorCodeList.ReadOnly = true;
             this.dgvErrorCodeList.RowHeadersVisible = false;
             this.dgvErrorCodeList.RowHeadersWidth = 102;
             this.dgvErrorCodeList.RowTemplate.Height = 60;
             this.dgvErrorCodeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvErrorCodeList.Size = new System.Drawing.Size(2110, 937);
+            this.dgvErrorCodeList.Size = new System.Drawing.Size(941, 378);
             this.dgvErrorCodeList.TabIndex = 0;
+            // 
+            // Code
+            // 
+            this.Code.HeaderText = "错误码";
+            this.Code.MinimumWidth = 12;
+            this.Code.Name = "Code";
+            this.Code.ReadOnly = true;
+            // 
+            // Description
+            // 
+            this.Description.HeaderText = "描述";
+            this.Description.MinimumWidth = 12;
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            // 
+            // Cause
+            // 
+            this.Cause.HeaderText = "原因";
+            this.Cause.MinimumWidth = 12;
+            this.Cause.Name = "Cause";
+            this.Cause.ReadOnly = true;
+            // 
+            // Solution
+            // 
+            this.Solution.HeaderText = "解决方法";
+            this.Solution.MinimumWidth = 12;
+            this.Solution.Name = "Solution";
+            this.Solution.ReadOnly = true;
             // 
             // tabAlarmHistory
             // 
             this.tabAlarmHistory.Controls.Add(this.dgvAlarmHistory);
-            this.tabAlarmHistory.Location = new System.Drawing.Point(10, 63);
+            this.tabAlarmHistory.Location = new System.Drawing.Point(4, 29);
             this.tabAlarmHistory.Name = "tabAlarmHistory";
             this.tabAlarmHistory.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAlarmHistory.Size = new System.Drawing.Size(2116, 943);
+            this.tabAlarmHistory.Size = new System.Drawing.Size(950, 387);
             this.tabAlarmHistory.TabIndex = 1;
             this.tabAlarmHistory.Text = "报警历史";
             this.tabAlarmHistory.UseVisualStyleBackColor = true;
@@ -434,7 +469,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             this.dgvAlarmHistory.AllowUserToAddRows = false;
             this.dgvAlarmHistory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvAlarmHistory.ColumnHeadersHeight = 58;
+            this.dgvAlarmHistory.ColumnHeadersHeight = 30;
             this.dgvAlarmHistory.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Time,
             this.ErrorCode,
@@ -442,23 +477,24 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.AlarmSolution});
             this.dgvAlarmHistory.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvAlarmHistory.Font = new System.Drawing.Font("微软雅黑", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dgvAlarmHistory.GridColor = System.Drawing.SystemColors.ButtonShadow;
             this.dgvAlarmHistory.Location = new System.Drawing.Point(3, 3);
             this.dgvAlarmHistory.Name = "dgvAlarmHistory";
             this.dgvAlarmHistory.ReadOnly = true;
             this.dgvAlarmHistory.RowHeadersVisible = false;
-            this.dgvAlarmHistory.RowHeadersWidth = 102;
+            this.dgvAlarmHistory.RowHeadersWidth = 60;
             this.dgvAlarmHistory.RowTemplate.Height = 60;
             this.dgvAlarmHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvAlarmHistory.Size = new System.Drawing.Size(2110, 937);
+            this.dgvAlarmHistory.Size = new System.Drawing.Size(944, 381);
             this.dgvAlarmHistory.TabIndex = 0;
             // 
             // tabDiagnosticTools
             // 
             this.tabDiagnosticTools.Controls.Add(this.panelDiagnostic);
-            this.tabDiagnosticTools.Location = new System.Drawing.Point(10, 63);
+            this.tabDiagnosticTools.Location = new System.Drawing.Point(4, 29);
             this.tabDiagnosticTools.Name = "tabDiagnosticTools";
             this.tabDiagnosticTools.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDiagnosticTools.Size = new System.Drawing.Size(2116, 943);
+            this.tabDiagnosticTools.Size = new System.Drawing.Size(950, 387);
             this.tabDiagnosticTools.TabIndex = 2;
             this.tabDiagnosticTools.Text = "诊断工具";
             this.tabDiagnosticTools.UseVisualStyleBackColor = true;
@@ -473,26 +509,26 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.panelDiagnostic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelDiagnostic.Location = new System.Drawing.Point(3, 3);
             this.panelDiagnostic.Name = "panelDiagnostic";
-            this.panelDiagnostic.Size = new System.Drawing.Size(2110, 937);
+            this.panelDiagnostic.Size = new System.Drawing.Size(944, 381);
             this.panelDiagnostic.TabIndex = 0;
             // 
             // txtPingResult
             // 
             this.txtPingResult.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPingResult.Location = new System.Drawing.Point(48, 165);
+            this.txtPingResult.Location = new System.Drawing.Point(5, 120);
             this.txtPingResult.Multiline = true;
             this.txtPingResult.Name = "txtPingResult";
             this.txtPingResult.ReadOnly = true;
             this.txtPingResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtPingResult.Size = new System.Drawing.Size(1867, 747);
+            this.txtPingResult.Size = new System.Drawing.Size(1131, 316);
             this.txtPingResult.TabIndex = 4;
             // 
             // btnPing
             // 
             this.btnPing.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnPing.Location = new System.Drawing.Point(711, 72);
+            this.btnPing.Location = new System.Drawing.Point(442, 69);
             this.btnPing.Name = "btnPing";
-            this.btnPing.Size = new System.Drawing.Size(120, 62);
+            this.btnPing.Size = new System.Drawing.Size(120, 42);
             this.btnPing.TabIndex = 3;
             this.btnPing.Text = "Ping测试";
             this.btnPing.UseVisualStyleBackColor = true;
@@ -500,9 +536,9 @@ namespace MelsecPLCCommunicator.UI.Forms
             // txtIpAddress
             // 
             this.txtIpAddress.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.txtIpAddress.Location = new System.Drawing.Point(263, 77);
+            this.txtIpAddress.Location = new System.Drawing.Point(186, 77);
             this.txtIpAddress.Name = "txtIpAddress";
-            this.txtIpAddress.Size = new System.Drawing.Size(409, 54);
+            this.txtIpAddress.Size = new System.Drawing.Size(217, 26);
             this.txtIpAddress.TabIndex = 2;
             // 
             // labelIpAddress
@@ -511,7 +547,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.labelIpAddress.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelIpAddress.Location = new System.Drawing.Point(50, 80);
             this.labelIpAddress.Name = "labelIpAddress";
-            this.labelIpAddress.Size = new System.Drawing.Size(228, 46);
+            this.labelIpAddress.Size = new System.Drawing.Size(93, 20);
             this.labelIpAddress.TabIndex = 1;
             this.labelIpAddress.Text = "PLC IP地址：";
             // 
@@ -521,43 +557,15 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.labelDiagnosticTitle.Font = new System.Drawing.Font("微软雅黑", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelDiagnosticTitle.Location = new System.Drawing.Point(30, 30);
             this.labelDiagnosticTitle.Name = "labelDiagnosticTitle";
-            this.labelDiagnosticTitle.Size = new System.Drawing.Size(244, 50);
+            this.labelDiagnosticTitle.Size = new System.Drawing.Size(99, 19);
             this.labelDiagnosticTitle.TabIndex = 0;
             this.labelDiagnosticTitle.Text = "网络诊断工具";
             // 
-            // Solution
-            // 
-            this.Solution.HeaderText = "解决方法";
-            this.Solution.MinimumWidth = 12;
-            this.Solution.Name = "Solution";
-            this.Solution.ReadOnly = true;
-            // 
-            // Cause
-            // 
-            this.Cause.HeaderText = "原因";
-            this.Cause.MinimumWidth = 12;
-            this.Cause.Name = "Cause";
-            this.Cause.ReadOnly = true;
-            // 
-            // Description
-            // 
-            this.Description.HeaderText = "描述";
-            this.Description.MinimumWidth = 12;
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
-            // 
-            // Code
-            // 
-            this.Code.HeaderText = "错误码";
-            this.Code.MinimumWidth = 12;
-            this.Code.Name = "Code";
-            this.Code.ReadOnly = true;
-            // 
             // ErrorCodeLookupForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(21F, 46F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2136, 1211);
+            this.ClientSize = new System.Drawing.Size(961, 569);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.panelTop);
             this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));

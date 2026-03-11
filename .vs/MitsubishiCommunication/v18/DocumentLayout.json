@@ -1,12 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|d:\\baidusyncdisk\\\u7F16\u7A0B\u9879\u76EE\\c#\\firstwin\\mitsubishicommunicationv3\\src\\melsecplccommunicator.ui\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{61B5C276-3326-4E3C-9B32-24E7101AFDDA}|src\\MelsecPLCCommunicator.UI\\MelsecPLCCommunicator.UI.csproj|solutionrelative:src\\melsecplccommunicator.ui\\forms\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -14,7 +9,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -55,18 +50,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainForm.cs [\u8BBE\u8BA1]",
-              "DocumentMoniker": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
-              "RelativeDocumentMoniker": "src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs",
-              "ToolTip": "D:\\BaiduSyncdisk\\\u7F16\u7A0B\u9879\u76EE\\C#\\Firstwin\\MitsubishiCommunicationV3\\src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs [\u8BBE\u8BA1]",
-              "RelativeToolTip": "src\\MelsecPLCCommunicator.UI\\Forms\\MainForm.cs [\u8BBE\u8BA1]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T02:02:34.149Z",
-              "EditorCaption": " [\u8BBE\u8BA1]"
             }
           ]
         }

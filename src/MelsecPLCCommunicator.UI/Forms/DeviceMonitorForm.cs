@@ -100,7 +100,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMain.Location = new System.Drawing.Point(0, 0);
             this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(1998, 1030);
+            this.panelMain.Size = new System.Drawing.Size(672, 188);
             this.panelMain.TabIndex = 0;
             // 
             // groupBoxDeviceStatus
@@ -109,7 +109,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.groupBoxDeviceStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxDeviceStatus.Location = new System.Drawing.Point(0, 0);
             this.groupBoxDeviceStatus.Name = "groupBoxDeviceStatus";
-            this.groupBoxDeviceStatus.Size = new System.Drawing.Size(1998, 1030);
+            this.groupBoxDeviceStatus.Size = new System.Drawing.Size(672, 188);
             this.groupBoxDeviceStatus.TabIndex = 0;
             this.groupBoxDeviceStatus.TabStop = false;
             this.groupBoxDeviceStatus.Text = "设备状态";
@@ -121,18 +121,18 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.dgvDeviceStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvDeviceStatus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDeviceStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvDeviceStatus.Location = new System.Drawing.Point(3, 50);
+            this.dgvDeviceStatus.Location = new System.Drawing.Point(3, 22);
             this.dgvDeviceStatus.Name = "dgvDeviceStatus";
             this.dgvDeviceStatus.RowHeadersWidth = 60;
             this.dgvDeviceStatus.RowTemplate.Height = 40;
-            this.dgvDeviceStatus.Size = new System.Drawing.Size(1992, 977);
+            this.dgvDeviceStatus.Size = new System.Drawing.Size(666, 163);
             this.dgvDeviceStatus.TabIndex = 0;
             // 
             // DeviceMonitorForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(21F, 46F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1998, 1030);
+            this.ClientSize = new System.Drawing.Size(672, 188);
             this.Controls.Add(this.panelMain);
             this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "DeviceMonitorForm";

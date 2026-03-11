@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using HslCommunication;
 using HslCommunication.Profinet.Melsec;
 using HslCommunication.ModBus;
@@ -61,7 +62,13 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
         /// </summary>
         private void InitializeLog()
         {
-            _logNet = new HslCommunication.LogNet.LogNetSingle(@"logs\network.log");
+            // 确保 logs 文件夹存在
+            string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            if (!Directory.Exists(logPath))
+            {
+                Directory.CreateDirectory(logPath);
+            }
+            _logNet = new HslCommunication.LogNet.LogNetSingle(Path.Combine(logPath, "network.log"));
             _logNet.BeforeSaveToFile += LogNet_BeforeSaveToFile;
         }
 
@@ -582,14 +589,26 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "B":
                 case "S":
                 case "F":
-                case "T":
-                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
                         return boolResult.Content;
                     }
                     throw new Exception(boolResult.Message);
+                case "T":
+                    var boolResultT = plc.ReadBool($"TS{address}", length);
+                    if (boolResultT.IsSuccess)
+                    {
+                        return boolResultT.Content;
+                    }
+                    throw new Exception(boolResultT.Message);
+                case "C":
+                    var boolResultC = plc.ReadBool($"CS{address}", length);
+                    if (boolResultC.IsSuccess)
+                    {
+                        return boolResultC.Content;
+                    }
+                    throw new Exception(boolResultC.Message);
                 case "D":
                 case "W":
                 case "R":
@@ -647,14 +666,26 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "B":
                 case "S":
                 case "F":
-                case "T":
-                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
                         return boolResult.Content;
                     }
                     throw new Exception(boolResult.Message);
+                case "T":
+                    var boolResultT = plc.ReadBool($"TS{address}", length);
+                    if (boolResultT.IsSuccess)
+                    {
+                        return boolResultT.Content;
+                    }
+                    throw new Exception(boolResultT.Message);
+                case "C":
+                    var boolResultC = plc.ReadBool($"CS{address}", length);
+                    if (boolResultC.IsSuccess)
+                    {
+                        return boolResultC.Content;
+                    }
+                    throw new Exception(boolResultC.Message);
                 case "D":
                 case "W":
                 case "R":
@@ -696,8 +727,6 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                     case "B":
                     case "S":
                     case "F":
-                    case "T":
-                    case "C":
                         var boolResult = plc.ReadBool($"{dataType}{address}", length);
                         if (boolResult.IsSuccess)
                         {
@@ -706,13 +735,32 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         }
                         _logNet?.WriteError($"UDP读取布尔值失败: {boolResult.Message}");
                         throw new Exception(boolResult.Message);
+                    case "T":
+                        var boolResultT = plc.ReadBool($"TS{address}", length);
+                        if (boolResultT.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取布尔值成功: {boolResultT.Content}");
+                            return boolResultT.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取布尔值失败: {boolResultT.Message}");
+                        throw new Exception(boolResultT.Message);
+                    case "C":
+                        var boolResultC = plc.ReadBool($"CS{address}", length);
+                        if (boolResultC.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP读取布尔值成功: {boolResultC.Content}");
+                            return boolResultC.Content;
+                        }
+                        _logNet?.WriteError($"UDP读取布尔值失败: {boolResultC.Message}");
+                        throw new Exception(boolResultC.Message);
                     case "D":
                     case "W":
                     case "R":
                         var shortResult = plc.ReadInt16($"{dataType}{address}", length);
                         if (shortResult.IsSuccess)
                         {
-                            _logNet?.WriteInfo($"UDP读取短整型成功: {shortResult.Content}");
+                            var contentStr = shortResult.Content != null ? string.Join(", ", shortResult.Content) : "null";
+                            _logNet?.WriteInfo($"UDP读取短整型成功: [{contentStr}]");
                             return shortResult.Content;
                         }
                         _logNet?.WriteError($"UDP读取短整型失败: {shortResult.Message}");
@@ -722,7 +770,8 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
                         if (shortResultTC.IsSuccess)
                         {
-                            _logNet?.WriteInfo($"UDP读取定时器/计数器成功: {shortResultTC.Content}");
+                            var contentStr = shortResultTC.Content != null ? string.Join(", ", shortResultTC.Content) : "null";
+                            _logNet?.WriteInfo($"UDP读取定时器/计数器成功: [{contentStr}]");
                             return shortResultTC.Content;
                         }
                         _logNet?.WriteError($"UDP读取定时器/计数器失败: {shortResultTC.Message}");
@@ -789,8 +838,6 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                     case "B":
                     case "S":
                     case "F":
-                    case "T":
-                    case "C":
                         var boolResult = plc.ReadBool($"{dataType}{address}", length);
                         if (boolResult.IsSuccess)
                         {
@@ -801,14 +848,37 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         _logNet?.WriteError($"UDP ASCII读取布尔值失败: {boolResult.Message}");
                         // _logService?.Error($"UDP ASCII读取布尔值失败: {boolResult.Message}");
                         throw new Exception(boolResult.Message);
+                    case "T":
+                        var boolResultT = plc.ReadBool($"TS{address}", length);
+                        if (boolResultT.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取布尔值成功: {boolResultT.Content}");
+                            // _logService?.Info($"UDP ASCII读取布尔值成功: {boolResultT.Content}");
+                            return boolResultT.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取布尔值失败: {boolResultT.Message}");
+                        // _logService?.Error($"UDP ASCII读取布尔值失败: {boolResultT.Message}");
+                        throw new Exception(boolResultT.Message);
+                    case "C":
+                        var boolResultC = plc.ReadBool($"CS{address}", length);
+                        if (boolResultC.IsSuccess)
+                        {
+                            _logNet?.WriteInfo($"UDP ASCII读取布尔值成功: {boolResultC.Content}");
+                            // _logService?.Info($"UDP ASCII读取布尔值成功: {boolResultC.Content}");
+                            return boolResultC.Content;
+                        }
+                        _logNet?.WriteError($"UDP ASCII读取布尔值失败: {boolResultC.Message}");
+                        // _logService?.Error($"UDP ASCII读取布尔值失败: {boolResultC.Message}");
+                        throw new Exception(boolResultC.Message);
                     case "D":
                     case "W":
                     case "R":
                         var shortResult = plc.ReadInt16($"{dataType}{address}", length);
                         if (shortResult.IsSuccess)
                         {
-                            _logNet?.WriteInfo($"UDP ASCII读取短整型成功: {shortResult.Content}");
-                            // _logService?.Info($"UDP ASCII读取短整型成功: {shortResult.Content}");
+                            var contentStr = shortResult.Content != null ? string.Join(", ", shortResult.Content) : "null";
+                            _logNet?.WriteInfo($"UDP ASCII读取短整型成功: [{contentStr}]");
+                            // _logService?.Info($"UDP ASCII读取短整型成功: [{contentStr}]");
                             return shortResult.Content;
                         }
                         _logNet?.WriteError($"UDP ASCII读取短整型失败: {shortResult.Message}");
@@ -819,8 +889,9 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                         var shortResultTC = plc.ReadInt16($"{dataType}{address}", length);
                         if (shortResultTC.IsSuccess)
                         {
-                            _logNet?.WriteInfo($"UDP ASCII读取定时器/计数器成功: {shortResultTC.Content}");
-                            // _logService?.Info($"UDP ASCII读取定时器/计数器成功: {shortResultTC.Content}");
+                            var contentStr = shortResultTC.Content != null ? string.Join(", ", shortResultTC.Content) : "null";
+                            _logNet?.WriteInfo($"UDP ASCII读取定时器/计数器成功: [{contentStr}]");
+                            // _logService?.Info($"UDP ASCII读取定时器/计数器成功: [{contentStr}]");
                             return shortResultTC.Content;
                         }
                         _logNet?.WriteError($"UDP ASCII读取定时器/计数器失败: {shortResultTC.Message}");
@@ -887,14 +958,26 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "B":
                 case "S":
                 case "F":
-                case "T":
-                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
                         return boolResult.Content;
                     }
                     throw new Exception(boolResult.Message);
+                case "T":
+                    var boolResultT = plc.ReadBool($"TS{address}", length);
+                    if (boolResultT.IsSuccess)
+                    {
+                        return boolResultT.Content;
+                    }
+                    throw new Exception(boolResultT.Message);
+                case "C":
+                    var boolResultC = plc.ReadBool($"CS{address}", length);
+                    if (boolResultC.IsSuccess)
+                    {
+                        return boolResultC.Content;
+                    }
+                    throw new Exception(boolResultC.Message);
                 case "D":
                 case "W":
                 case "R":
@@ -952,14 +1035,26 @@ namespace MelsecPLCCommunicator.Infrastructure.Adapters
                 case "B":
                 case "S":
                 case "F":
-                case "T":
-                case "C":
                     var boolResult = plc.ReadBool($"{dataType}{address}", length);
                     if (boolResult.IsSuccess)
                     {
                         return boolResult.Content;
                     }
                     throw new Exception(boolResult.Message);
+                case "T":
+                    var boolResultT = plc.ReadBool($"TS{address}", length);
+                    if (boolResultT.IsSuccess)
+                    {
+                        return boolResultT.Content;
+                    }
+                    throw new Exception(boolResultT.Message);
+                case "C":
+                    var boolResultC = plc.ReadBool($"CS{address}", length);
+                    if (boolResultC.IsSuccess)
+                    {
+                        return boolResultC.Content;
+                    }
+                    throw new Exception(boolResultC.Message);
                 case "D":
                 case "W":
                 case "R":

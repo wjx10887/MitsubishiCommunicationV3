@@ -21,7 +21,9 @@
 
   <ItemGroup>
     <PackageReference Include="HslCommunication" Version="12.6.3.0" />
+
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
 
 </Project>

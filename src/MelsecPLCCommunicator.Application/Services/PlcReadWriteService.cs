@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MelsecPLCCommunicator.Application.Interfaces;
 using MelsecPLCCommunicator.Domain.Enums;
@@ -14,6 +15,11 @@ namespace MelsecPLCCommunicator.Application.Services
     {
         private readonly IPlcConnectionService _connectionService;
         private readonly ILogService _logService;
+
+        /// <summary>
+        /// 批量读取数据完成事件
+        /// </summary>
+        public event EventHandler<BatchReadCompletedEventArgs> BatchReadCompleted;
 
         /// <summary>
         /// 构造函数
@@ -65,7 +71,9 @@ namespace MelsecPLCCommunicator.Application.Services
                     _logService.Debug($"接收帧: {BitConverter.ToString(receivedFrame)}");
                 }
                 
-                _logService.Info($"读取成功: {result}");
+                // 处理数组类型的日志显示
+                string resultStr = result is Array array ? string.Join(", ", array.Cast<object>()) : result?.ToString() ?? "null";
+                _logService.Info($"读取成功: {resultStr}");
                 return Result<object>.SuccessResult(result);
             }
             catch (System.Exception ex)
@@ -163,7 +171,9 @@ namespace MelsecPLCCommunicator.Application.Services
                         _logService.Debug($"接收帧: {BitConverter.ToString(receivedFrame)}");
                     }
                     
-                    _logService.Info($"第 {i+1} 个请求读取成功: {results[i]}");
+                    // 处理数组类型的日志显示
+                    string resultStr = results[i] is Array array ? string.Join(", ", array.Cast<object>()) : results[i]?.ToString() ?? "null";
+                    _logService.Info($"第 {i+1} 个请求读取成功: {resultStr}");
                     
                     // 对于UDP连接，添加适当的延迟，避免连续发送数据包导致超时
                     if (i < readRequests.Length - 1)
@@ -173,11 +183,41 @@ namespace MelsecPLCCommunicator.Application.Services
                 }
 
                 _logService.Info("批量读取完成");
+                
+                var eventArgs = new BatchReadCompletedEventArgs
+                {
+                    Requests = readRequests,
+                    Results = results,
+                    Success = true,
+                    ErrorMessage = null
+                };
+                
+                // 检查是否有订阅者
+                if (BatchReadCompleted != null)
+                {
+                    _logService.Info($"触发BatchReadCompleted事件，订阅者数量: {BatchReadCompleted.GetInvocationList().Length}");
+                    BatchReadCompleted.Invoke(this, eventArgs);
+                }
+                else
+                {
+                    _logService.Warning("BatchReadCompleted事件没有订阅者");
+                }
+                
                 return Result<object[]>.SuccessResult(results);
             }
             catch (System.Exception ex)
             {
                 _logService.Error("批量读取数据异常", ex);
+                
+                var eventArgs = new BatchReadCompletedEventArgs
+                {
+                    Requests = readRequests,
+                    Results = null,
+                    Success = false,
+                    ErrorMessage = ex.Message
+                };
+                BatchReadCompleted?.Invoke(this, eventArgs);
+                
                 return Result<object[]>.FailureResult(Error.ReadWriteError($"批量读取失败: {ex.Message}"));
             }
         }

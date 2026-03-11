@@ -17,6 +17,9 @@
     <Compile Update="Forms\FrameAnalyzerForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\HistoryQueryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -19,3 +19,4 @@ D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPL
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.DeviceMonitorForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.ErrorCodeLookupForm.resources
 D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.FrameAnalyzerForm.resources
+D:\BaiduSyncdisk\编程项目\C#\Firstwin\MitsubishiCommunicationV3\src\MelsecPLCCommunicator.UI\obj\Release\MelsecPLCCommunicator.UI.Forms.HistoryQueryForm.resources

@@ -113,7 +113,7 @@ namespace MelsecPLCCommunicator.UI.Forms
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTop = new System.Windows.Forms.Panel();
             this.chkIsSendFrame = new System.Windows.Forms.CheckBox();
             this.btnParse = new System.Windows.Forms.Button();
@@ -145,7 +145,7 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1763, 340);
+            this.panelTop.Size = new System.Drawing.Size(895, 102);
             this.panelTop.TabIndex = 0;
             // 
             // chkIsSendFrame
@@ -154,9 +154,9 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.chkIsSendFrame.Checked = true;
             this.chkIsSendFrame.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIsSendFrame.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.chkIsSendFrame.Location = new System.Drawing.Point(199, 265);
+            this.chkIsSendFrame.Location = new System.Drawing.Point(103, 8);
             this.chkIsSendFrame.Name = "chkIsSendFrame";
-            this.chkIsSendFrame.Size = new System.Drawing.Size(220, 56);
+            this.chkIsSendFrame.Size = new System.Drawing.Size(93, 25);
             this.chkIsSendFrame.TabIndex = 3;
             this.chkIsSendFrame.Text = "是发送帧";
             this.chkIsSendFrame.UseVisualStyleBackColor = true;
@@ -176,21 +176,22 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             // txtFrame
             // 
+            this.txtFrame.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.txtFrame.Font = new System.Drawing.Font("Consolas", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFrame.Location = new System.Drawing.Point(199, 40);
+            this.txtFrame.Location = new System.Drawing.Point(0, 40);
             this.txtFrame.Multiline = true;
             this.txtFrame.Name = "txtFrame";
             this.txtFrame.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtFrame.Size = new System.Drawing.Size(1200, 219);
+            this.txtFrame.Size = new System.Drawing.Size(895, 62);
             this.txtFrame.TabIndex = 1;
             // 
             // labelFrame
             // 
             this.labelFrame.AutoSize = true;
             this.labelFrame.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelFrame.Location = new System.Drawing.Point(40, 40);
+            this.labelFrame.Location = new System.Drawing.Point(12, 9);
             this.labelFrame.Name = "labelFrame";
-            this.labelFrame.Size = new System.Drawing.Size(182, 52);
+            this.labelFrame.Size = new System.Drawing.Size(74, 21);
             this.labelFrame.TabIndex = 0;
             this.labelFrame.Text = "通讯帧：";
             // 
@@ -198,9 +199,9 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             this.panelBottom.Controls.Add(this.tabControl);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(0, 340);
+            this.panelBottom.Location = new System.Drawing.Point(0, 102);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1763, 892);
+            this.panelBottom.Size = new System.Drawing.Size(895, 310);
             this.panelBottom.TabIndex = 1;
             // 
             // tabControl
@@ -209,21 +210,22 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.tabControl.Controls.Add(this.tabData);
             this.tabControl.Controls.Add(this.tabItems);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tabControl.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.tabControl.ItemSize = new System.Drawing.Size(50, 50);
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.Padding = new System.Drawing.Point(15, 15);
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1763, 892);
+            this.tabControl.Size = new System.Drawing.Size(895, 310);
             this.tabControl.TabIndex = 0;
             // 
             // tabBasic
             // 
             this.tabBasic.Controls.Add(this.txtBasicInfo);
-            this.tabBasic.Location = new System.Drawing.Point(10, 89);
+            this.tabBasic.Location = new System.Drawing.Point(4, 54);
             this.tabBasic.Name = "tabBasic";
             this.tabBasic.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBasic.Size = new System.Drawing.Size(1743, 793);
+            this.tabBasic.Size = new System.Drawing.Size(887, 252);
             this.tabBasic.TabIndex = 0;
             this.tabBasic.Text = "基本信息";
             this.tabBasic.UseVisualStyleBackColor = true;
@@ -237,16 +239,16 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.txtBasicInfo.Name = "txtBasicInfo";
             this.txtBasicInfo.ReadOnly = true;
             this.txtBasicInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtBasicInfo.Size = new System.Drawing.Size(1737, 787);
+            this.txtBasicInfo.Size = new System.Drawing.Size(881, 246);
             this.txtBasicInfo.TabIndex = 0;
             // 
             // tabData
             // 
             this.tabData.Controls.Add(this.txtDataInfo);
-            this.tabData.Location = new System.Drawing.Point(10, 89);
+            this.tabData.Location = new System.Drawing.Point(4, 54);
             this.tabData.Name = "tabData";
             this.tabData.Padding = new System.Windows.Forms.Padding(3);
-            this.tabData.Size = new System.Drawing.Size(1743, 793);
+            this.tabData.Size = new System.Drawing.Size(887, 534);
             this.tabData.TabIndex = 1;
             this.tabData.Text = "数据详情";
             this.tabData.UseVisualStyleBackColor = true;
@@ -260,16 +262,16 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.txtDataInfo.Name = "txtDataInfo";
             this.txtDataInfo.ReadOnly = true;
             this.txtDataInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDataInfo.Size = new System.Drawing.Size(1737, 787);
+            this.txtDataInfo.Size = new System.Drawing.Size(881, 528);
             this.txtDataInfo.TabIndex = 0;
             // 
             // tabItems
             // 
             this.tabItems.Controls.Add(this.dgvItems);
-            this.tabItems.Location = new System.Drawing.Point(10, 89);
+            this.tabItems.Location = new System.Drawing.Point(4, 54);
             this.tabItems.Name = "tabItems";
             this.tabItems.Padding = new System.Windows.Forms.Padding(3);
-            this.tabItems.Size = new System.Drawing.Size(1743, 793);
+            this.tabItems.Size = new System.Drawing.Size(887, 534);
             this.tabItems.TabIndex = 2;
             this.tabItems.Text = "软元件列表";
             this.tabItems.UseVisualStyleBackColor = true;
@@ -278,8 +280,8 @@ namespace MelsecPLCCommunicator.UI.Forms
             // 
             this.dgvItems.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvItems.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.dgvItems.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dgvItems.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvItems.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -288,14 +290,14 @@ namespace MelsecPLCCommunicator.UI.Forms
             this.dgvItems.Name = "dgvItems";
             this.dgvItems.RowHeadersWidth = 80;
             this.dgvItems.RowTemplate.Height = 50;
-            this.dgvItems.Size = new System.Drawing.Size(1737, 787);
+            this.dgvItems.Size = new System.Drawing.Size(881, 528);
             this.dgvItems.TabIndex = 0;
             // 
             // FrameAnalyzerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(24F, 52F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1763, 1232);
+            this.ClientSize = new System.Drawing.Size(895, 412);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.panelTop);
             this.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -23,6 +24,7 @@ namespace MelsecPLCCommunicator.UI
         private readonly ILogService _logService;
         private readonly ISettingsService _settingsService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly PlcDataLogger _plcDataLogger;
         private ConnectionConfigDto _currentConfig;
         private System.Threading.Timer _monitorTimer;
         private DataGridViewComboBoxColumn columnDataType;
@@ -30,7 +32,6 @@ namespace MelsecPLCCommunicator.UI
         private DataGridViewComboBoxColumn columnOperationType;
         private DataGridViewTextBoxColumn columnValue;
         private DataGridViewTextBoxColumn columnResult;
-        private ToolStripProgressBar toolStripProgressBar1;
         private int _monitorInterval = 1000; // 默认1秒
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace MelsecPLCCommunicator.UI
             _logService = logService;
             _settingsService = settingsService;
             _serviceProvider = serviceProvider;
+            _plcDataLogger = serviceProvider.GetRequiredService<PlcDataLogger>();
             InitializeComponent();
             InitializeUI();
             
@@ -94,6 +96,14 @@ namespace MelsecPLCCommunicator.UI
         {
             // 设置窗口大小
             this.Size = new System.Drawing.Size(2550, 1500);
+            
+            // 使用根目录的FormIcon.ico作为应用程序图标
+            string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "FormIcon.ico");
+            if (System.IO.File.Exists(iconPath))
+            {
+                this.Icon = new System.Drawing.Icon(iconPath);
+            }
+            
             // 初始化时可以添加其他必要的代码
         }
 
@@ -110,10 +120,11 @@ namespace MelsecPLCCommunicator.UI
             fileMenu.DropDownItems.Add("退出", null, Exit_Click);
 
             // 创建操作菜单
-            var operationMenu = new ToolStripMenuItem("操作");
-            //operationMenu.DropDownItems.Add("批量读写", null, BatchOperation_Click);
+            var operationMenu = new ToolStripMenuItem("显示");
+          
             operationMenu.DropDownItems.Add("连接监控", null, ConnectionMonitor_Click);
-           // operationMenu.DropDownItems.Add("设备监控", null, DeviceMonitor_Click);
+            operationMenu.DropDownItems.Add("数据记录", null, HistoryQuery_Click);
+
 
             // 创建工具菜单
             var toolMenu = new ToolStripMenuItem("工具");
@@ -137,7 +148,7 @@ namespace MelsecPLCCommunicator.UI
             panelLog.Dock = DockStyle.Right;
             txtLog.ReadOnly = true;
             txtLog.ScrollBars = ScrollBars.Vertical;
-            txtLog.WordWrap = false; // 禁用自动换行，便于查看长日志
+            txtLog.WordWrap = true; // 启用自动换行
 
             // 添加日志按钮
             btnClearLog.Click += BtnClearLog_Click;
@@ -289,7 +300,7 @@ namespace MelsecPLCCommunicator.UI
             domainUpDownDataCount.Text = "1"; // 默认1
 
             // 初始化数据类型下拉框
-            cmbDataType.Items.AddRange(new string[] { "X", "Y", "M", "B", "S", "F", "TS", "CS", "TC", "CC", "D", "W", "R", "TN", "CN", "D32", "Float", "DFloat" });
+            cmbDataType.Items.AddRange(new string[] { "X", "Y", "M", "B", "S", "F", "T", "C", "D", "W", "R", "TN", "CN", "D32", "Float", "DFloat" });
             if (cmbDataType.Items.Count > 0)
             {
                 cmbDataType.SelectedIndex = 0;
@@ -323,7 +334,7 @@ namespace MelsecPLCCommunicator.UI
 
             // 初始化数据表格
             dataGridViewBatch.AutoGenerateColumns = false;
-            dataGridViewBatch.AllowUserToAddRows = false;
+            dataGridViewBatch.AllowUserToAddRows = true;
             dataGridViewBatch.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewBatch.MultiSelect = false;
 
@@ -618,7 +629,9 @@ namespace MelsecPLCCommunicator.UI
                                     row.Cells["columnValue"].Value = value;
                                 }
                                 row.Cells["columnResult"].Value = "成功";
-                                _logService.Info($"读取成功: {readRequests[i].Address} = {value}");
+                                // 处理数组类型的日志显示
+                                string valueStr = value is Array arr ? string.Join(", ", arr.Cast<object>()) : value?.ToString() ?? "null";
+                                _logService.Info($"读取成功: {readRequests[i].Address} = {valueStr}");
                             }
                             
                             if (invalidCount > 0)
@@ -1126,11 +1139,23 @@ namespace MelsecPLCCommunicator.UI
             this.Close();
         }
 
-        private void BatchOperation_Click(object sender, EventArgs e)
-        {
-            // 批量操作功能已集成到主窗体
-            // 无需打开新窗口
+        private void HistoryQuery_Click(object sender, EventArgs e)
+        { 
+            try
+            {
+                // 打开历史数据查询窗体
+                var historyForm = _serviceProvider.GetRequiredService<HistoryQueryForm>();
+                var historyQueryService = _serviceProvider.GetRequiredService<HistoryQueryService>();
+                historyForm.SetHistoryQueryService(historyQueryService);
+                historyForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"打开历史数据查询窗体失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AppendLog($"打开历史数据查询窗体失败: {ex.Message}", "ERROR");
+            }
         }
+            
        
 
         private void ConnectionMonitor_Click(object sender, EventArgs e)
@@ -1237,6 +1262,7 @@ namespace MelsecPLCCommunicator.UI
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.panelMain = new System.Windows.Forms.Panel();
             this.btnClearMonitor = new System.Windows.Forms.Button();
@@ -1279,8 +1305,6 @@ namespace MelsecPLCCommunicator.UI
             this.btnSaveLog = new System.Windows.Forms.Button();
             this.btnClearLog = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.panelMain.SuspendLayout();
             this.groupBoxConnection.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
@@ -1288,17 +1312,15 @@ namespace MelsecPLCCommunicator.UI
             this.groupBoxBatch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewBatch)).BeginInit();
             this.panelLog.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(40, 40);
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(2389, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(2, 1, 0, 1);
+            this.menuStrip1.Size = new System.Drawing.Size(1084, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -1316,17 +1338,15 @@ namespace MelsecPLCCommunicator.UI
             this.panelMain.Controls.Add(this.btnWriteAll);
             this.panelMain.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelMain.Location = new System.Drawing.Point(0, 24);
-            this.panelMain.Margin = new System.Windows.Forms.Padding(8);
             this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(1151, 1381);
+            this.panelMain.Size = new System.Drawing.Size(460, 643);
             this.panelMain.TabIndex = 1;
             // 
             // btnClearMonitor
             // 
-            this.btnClearMonitor.Location = new System.Drawing.Point(26, 520);
-            this.btnClearMonitor.Margin = new System.Windows.Forms.Padding(8);
+            this.btnClearMonitor.Location = new System.Drawing.Point(10, 208);
             this.btnClearMonitor.Name = "btnClearMonitor";
-            this.btnClearMonitor.Size = new System.Drawing.Size(188, 70);
+            this.btnClearMonitor.Size = new System.Drawing.Size(75, 28);
             this.btnClearMonitor.TabIndex = 9;
             this.btnClearMonitor.Text = "清除表格";
             this.btnClearMonitor.UseVisualStyleBackColor = true;
@@ -1338,21 +1358,18 @@ namespace MelsecPLCCommunicator.UI
             this.groupBoxConnection.Controls.Add(this.btnConnect);
             this.groupBoxConnection.Controls.Add(this.lblConnectionStatus);
             this.groupBoxConnection.Controls.Add(this.label1);
-            this.groupBoxConnection.Location = new System.Drawing.Point(28, 28);
-            this.groupBoxConnection.Margin = new System.Windows.Forms.Padding(8);
+            this.groupBoxConnection.Location = new System.Drawing.Point(11, 11);
             this.groupBoxConnection.Name = "groupBoxConnection";
-            this.groupBoxConnection.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBoxConnection.Size = new System.Drawing.Size(1099, 105);
+            this.groupBoxConnection.Size = new System.Drawing.Size(440, 42);
             this.groupBoxConnection.TabIndex = 0;
             this.groupBoxConnection.TabStop = false;
             this.groupBoxConnection.Text = "连接状态";
             // 
             // btnDisconnect
             // 
-            this.btnDisconnect.Location = new System.Drawing.Point(712, 28);
-            this.btnDisconnect.Margin = new System.Windows.Forms.Padding(8);
+            this.btnDisconnect.Location = new System.Drawing.Point(285, 11);
             this.btnDisconnect.Name = "btnDisconnect";
-            this.btnDisconnect.Size = new System.Drawing.Size(188, 70);
+            this.btnDisconnect.Size = new System.Drawing.Size(75, 28);
             this.btnDisconnect.TabIndex = 3;
             this.btnDisconnect.Text = "断开";
             this.btnDisconnect.UseVisualStyleBackColor = true;
@@ -1360,10 +1377,9 @@ namespace MelsecPLCCommunicator.UI
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(502, 28);
-            this.btnConnect.Margin = new System.Windows.Forms.Padding(8);
+            this.btnConnect.Location = new System.Drawing.Point(201, 11);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(188, 70);
+            this.btnConnect.Size = new System.Drawing.Size(75, 28);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "连接";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -1372,20 +1388,18 @@ namespace MelsecPLCCommunicator.UI
             // lblConnectionStatus
             // 
             this.lblConnectionStatus.AutoSize = true;
-            this.lblConnectionStatus.Location = new System.Drawing.Point(220, 45);
-            this.lblConnectionStatus.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.lblConnectionStatus.Location = new System.Drawing.Point(88, 18);
             this.lblConnectionStatus.Name = "lblConnectionStatus";
-            this.lblConnectionStatus.Size = new System.Drawing.Size(103, 30);
+            this.lblConnectionStatus.Size = new System.Drawing.Size(41, 12);
             this.lblConnectionStatus.TabIndex = 1;
             this.lblConnectionStatus.Text = "未连接";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(33, 45);
-            this.label1.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label1.Location = new System.Drawing.Point(13, 18);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(163, 30);
+            this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "当前状态：";
             // 
@@ -1396,11 +1410,9 @@ namespace MelsecPLCCommunicator.UI
             this.groupBoxSettings.Controls.Add(this.checkBoxMonitor);
             this.groupBoxSettings.Controls.Add(this.label12);
             this.groupBoxSettings.Controls.Add(this.txtMonitorInterval);
-            this.groupBoxSettings.Location = new System.Drawing.Point(28, 148);
-            this.groupBoxSettings.Margin = new System.Windows.Forms.Padding(8);
+            this.groupBoxSettings.Location = new System.Drawing.Point(11, 59);
             this.groupBoxSettings.Name = "groupBoxSettings";
-            this.groupBoxSettings.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBoxSettings.Size = new System.Drawing.Size(1099, 129);
+            this.groupBoxSettings.Size = new System.Drawing.Size(440, 52);
             this.groupBoxSettings.TabIndex = 1;
             this.groupBoxSettings.TabStop = false;
             this.groupBoxSettings.Text = "连接设置";
@@ -1408,29 +1420,26 @@ namespace MelsecPLCCommunicator.UI
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(23, 58);
-            this.label7.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label7.Location = new System.Drawing.Point(9, 23);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(163, 30);
+            this.label7.Size = new System.Drawing.Size(65, 12);
             this.label7.TabIndex = 0;
             this.label7.Text = "连接名称：";
             // 
             // cmbConnectionName
             // 
             this.cmbConnectionName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbConnectionName.Location = new System.Drawing.Point(192, 58);
-            this.cmbConnectionName.Margin = new System.Windows.Forms.Padding(8);
+            this.cmbConnectionName.Location = new System.Drawing.Point(77, 23);
             this.cmbConnectionName.Name = "cmbConnectionName";
-            this.cmbConnectionName.Size = new System.Drawing.Size(360, 38);
+            this.cmbConnectionName.Size = new System.Drawing.Size(146, 20);
             this.cmbConnectionName.TabIndex = 1;
             // 
             // checkBoxMonitor
             // 
             this.checkBoxMonitor.AutoSize = true;
-            this.checkBoxMonitor.Location = new System.Drawing.Point(568, 58);
-            this.checkBoxMonitor.Margin = new System.Windows.Forms.Padding(8);
+            this.checkBoxMonitor.Location = new System.Drawing.Point(227, 23);
             this.checkBoxMonitor.Name = "checkBoxMonitor";
-            this.checkBoxMonitor.Size = new System.Drawing.Size(171, 34);
+            this.checkBoxMonitor.Size = new System.Drawing.Size(72, 16);
             this.checkBoxMonitor.TabIndex = 2;
             this.checkBoxMonitor.Text = "监控模式";
             this.checkBoxMonitor.UseVisualStyleBackColor = true;
@@ -1438,19 +1447,17 @@ namespace MelsecPLCCommunicator.UI
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(756, 58);
-            this.label12.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label12.Location = new System.Drawing.Point(302, 23);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(163, 30);
+            this.label12.Size = new System.Drawing.Size(65, 12);
             this.label12.TabIndex = 3;
             this.label12.Text = "监控间隔：";
             // 
             // txtMonitorInterval
             // 
-            this.txtMonitorInterval.Location = new System.Drawing.Point(921, 52);
-            this.txtMonitorInterval.Margin = new System.Windows.Forms.Padding(8);
+            this.txtMonitorInterval.Location = new System.Drawing.Point(368, 21);
             this.txtMonitorInterval.Name = "txtMonitorInterval";
-            this.txtMonitorInterval.Size = new System.Drawing.Size(135, 42);
+            this.txtMonitorInterval.Size = new System.Drawing.Size(56, 21);
             this.txtMonitorInterval.TabIndex = 4;
             this.txtMonitorInterval.Text = "1000";
             // 
@@ -1460,11 +1467,9 @@ namespace MelsecPLCCommunicator.UI
             this.groupBoxMode.Controls.Add(this.cmbReadWriteMode);
             this.groupBoxMode.Controls.Add(this.label14);
             this.groupBoxMode.Controls.Add(this.domainUpDownDataCount);
-            this.groupBoxMode.Location = new System.Drawing.Point(28, 277);
-            this.groupBoxMode.Margin = new System.Windows.Forms.Padding(8);
+            this.groupBoxMode.Location = new System.Drawing.Point(11, 111);
             this.groupBoxMode.Name = "groupBoxMode";
-            this.groupBoxMode.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBoxMode.Size = new System.Drawing.Size(1099, 117);
+            this.groupBoxMode.Size = new System.Drawing.Size(440, 47);
             this.groupBoxMode.TabIndex = 2;
             this.groupBoxMode.TabStop = false;
             this.groupBoxMode.Text = "操作模式";
@@ -1472,38 +1477,34 @@ namespace MelsecPLCCommunicator.UI
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(23, 47);
-            this.label13.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label13.Location = new System.Drawing.Point(9, 19);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(163, 30);
+            this.label13.Size = new System.Drawing.Size(65, 12);
             this.label13.TabIndex = 0;
             this.label13.Text = "读写模式：";
             // 
             // cmbReadWriteMode
             // 
             this.cmbReadWriteMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbReadWriteMode.Location = new System.Drawing.Point(199, 39);
-            this.cmbReadWriteMode.Margin = new System.Windows.Forms.Padding(8);
+            this.cmbReadWriteMode.Location = new System.Drawing.Point(80, 16);
             this.cmbReadWriteMode.Name = "cmbReadWriteMode";
-            this.cmbReadWriteMode.Size = new System.Drawing.Size(229, 38);
+            this.cmbReadWriteMode.Size = new System.Drawing.Size(94, 20);
             this.cmbReadWriteMode.TabIndex = 1;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(445, 47);
-            this.label14.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label14.Location = new System.Drawing.Point(178, 19);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(163, 30);
+            this.label14.Size = new System.Drawing.Size(65, 12);
             this.label14.TabIndex = 2;
             this.label14.Text = "数据数量：";
             // 
             // domainUpDownDataCount
             // 
-            this.domainUpDownDataCount.Location = new System.Drawing.Point(609, 39);
-            this.domainUpDownDataCount.Margin = new System.Windows.Forms.Padding(8);
+            this.domainUpDownDataCount.Location = new System.Drawing.Point(244, 16);
             this.domainUpDownDataCount.Name = "domainUpDownDataCount";
-            this.domainUpDownDataCount.Size = new System.Drawing.Size(141, 42);
+            this.domainUpDownDataCount.Size = new System.Drawing.Size(56, 21);
             this.domainUpDownDataCount.TabIndex = 3;
             // 
             // groupBoxBatch
@@ -1514,11 +1515,9 @@ namespace MelsecPLCCommunicator.UI
             this.groupBoxBatch.Controls.Add(this.label9);
             this.groupBoxBatch.Controls.Add(this.txtAddress);
             this.groupBoxBatch.Controls.Add(this.label8);
-            this.groupBoxBatch.Location = new System.Drawing.Point(28, 394);
-            this.groupBoxBatch.Margin = new System.Windows.Forms.Padding(8);
+            this.groupBoxBatch.Location = new System.Drawing.Point(11, 158);
             this.groupBoxBatch.Name = "groupBoxBatch";
-            this.groupBoxBatch.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBoxBatch.Size = new System.Drawing.Size(1099, 122);
+            this.groupBoxBatch.Size = new System.Drawing.Size(440, 49);
             this.groupBoxBatch.TabIndex = 3;
             this.groupBoxBatch.TabStop = false;
             this.groupBoxBatch.Text = "添加数据";
@@ -1526,65 +1525,58 @@ namespace MelsecPLCCommunicator.UI
             // cmbOperationType
             // 
             this.cmbOperationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbOperationType.Location = new System.Drawing.Point(712, 52);
-            this.cmbOperationType.Margin = new System.Windows.Forms.Padding(8);
+            this.cmbOperationType.Location = new System.Drawing.Point(324, 20);
             this.cmbOperationType.Name = "cmbOperationType";
-            this.cmbOperationType.Size = new System.Drawing.Size(126, 38);
+            this.cmbOperationType.Size = new System.Drawing.Size(53, 20);
             this.cmbOperationType.TabIndex = 5;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(548, 61);
-            this.label10.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label10.Location = new System.Drawing.Point(258, 23);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(163, 30);
+            this.label10.Size = new System.Drawing.Size(65, 12);
             this.label10.TabIndex = 4;
             this.label10.Text = "操作类型：";
             // 
             // cmbDataType
             // 
             this.cmbDataType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDataType.Location = new System.Drawing.Point(129, 52);
-            this.cmbDataType.Margin = new System.Windows.Forms.Padding(8);
+            this.cmbDataType.Location = new System.Drawing.Point(66, 21);
             this.cmbDataType.Name = "cmbDataType";
-            this.cmbDataType.Size = new System.Drawing.Size(107, 38);
+            this.cmbDataType.Size = new System.Drawing.Size(63, 20);
             this.cmbDataType.TabIndex = 3;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(11, 61);
-            this.label9.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label9.Location = new System.Drawing.Point(4, 24);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(103, 30);
+            this.label9.Size = new System.Drawing.Size(65, 12);
             this.label9.TabIndex = 2;
-            this.label9.Text = "类型：";
+            this.label9.Text = "变量符号：";
             // 
             // txtAddress
             // 
-            this.txtAddress.Location = new System.Drawing.Point(345, 52);
-            this.txtAddress.Margin = new System.Windows.Forms.Padding(8);
+            this.txtAddress.Location = new System.Drawing.Point(177, 20);
             this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(182, 42);
+            this.txtAddress.Size = new System.Drawing.Size(75, 21);
             this.txtAddress.TabIndex = 1;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(246, 61);
-            this.label8.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label8.Location = new System.Drawing.Point(137, 23);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(103, 30);
+            this.label8.Size = new System.Drawing.Size(41, 12);
             this.label8.TabIndex = 0;
             this.label8.Text = "地址：";
             // 
             // btnAddRow
             // 
-            this.btnAddRow.Location = new System.Drawing.Point(227, 520);
-            this.btnAddRow.Margin = new System.Windows.Forms.Padding(8);
+            this.btnAddRow.Location = new System.Drawing.Point(91, 208);
             this.btnAddRow.Name = "btnAddRow";
-            this.btnAddRow.Size = new System.Drawing.Size(188, 70);
+            this.btnAddRow.Size = new System.Drawing.Size(75, 28);
             this.btnAddRow.TabIndex = 4;
             this.btnAddRow.Text = "添加行";
             this.btnAddRow.UseVisualStyleBackColor = true;
@@ -1592,10 +1584,9 @@ namespace MelsecPLCCommunicator.UI
             // 
             // btnDeleteRow
             // 
-            this.btnDeleteRow.Location = new System.Drawing.Point(429, 520);
-            this.btnDeleteRow.Margin = new System.Windows.Forms.Padding(8);
+            this.btnDeleteRow.Location = new System.Drawing.Point(172, 208);
             this.btnDeleteRow.Name = "btnDeleteRow";
-            this.btnDeleteRow.Size = new System.Drawing.Size(188, 70);
+            this.btnDeleteRow.Size = new System.Drawing.Size(75, 28);
             this.btnDeleteRow.TabIndex = 5;
             this.btnDeleteRow.Text = "删除行";
             this.btnDeleteRow.UseVisualStyleBackColor = true;
@@ -1605,6 +1596,11 @@ namespace MelsecPLCCommunicator.UI
             // 
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightCyan;
             this.dataGridViewBatch.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridViewBatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewBatch.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridViewBatch.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridViewBatch.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightSteelBlue;
@@ -1614,7 +1610,7 @@ namespace MelsecPLCCommunicator.UI
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridViewBatch.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewBatch.ColumnHeadersHeight = 60;
+            this.dataGridViewBatch.ColumnHeadersHeight = 30;
             this.dataGridViewBatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridViewBatch.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnDataType,
@@ -1631,61 +1627,68 @@ namespace MelsecPLCCommunicator.UI
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewBatch.DefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridViewBatch.GridColor = System.Drawing.Color.LightGray;
-            this.dataGridViewBatch.Location = new System.Drawing.Point(28, 606);
-            this.dataGridViewBatch.Margin = new System.Windows.Forms.Padding(8);
+            this.dataGridViewBatch.Location = new System.Drawing.Point(11, 242);
             this.dataGridViewBatch.Name = "dataGridViewBatch";
-            this.dataGridViewBatch.RowHeadersWidth = 60;
-            this.dataGridViewBatch.RowTemplate.Height = 50;
-            this.dataGridViewBatch.Size = new System.Drawing.Size(1099, 679);
+            this.dataGridViewBatch.RowHeadersWidth = 20;
+            this.dataGridViewBatch.RowTemplate.Height = 20;
+            this.dataGridViewBatch.Size = new System.Drawing.Size(440, 377);
             this.dataGridViewBatch.TabIndex = 6;
             // 
             // columnDataType
             // 
+            this.columnDataType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.columnDataType.DropDownWidth = 180;
-            this.columnDataType.HeaderText = "数据类型";
-            this.columnDataType.MinimumWidth = 100;
+            this.columnDataType.FillWeight = 50F;
+            this.columnDataType.HeaderText = "变量符号";
+            this.columnDataType.MinimumWidth = 20;
             this.columnDataType.Name = "columnDataType";
-            this.columnDataType.Width = 180;
+            this.columnDataType.Width = 67;
             // 
             // columnAddress
             // 
+            this.columnAddress.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.columnAddress.FillWeight = 50F;
             this.columnAddress.HeaderText = "地址";
-            this.columnAddress.MinimumWidth = 150;
+            this.columnAddress.MinimumWidth = 20;
             this.columnAddress.Name = "columnAddress";
-            this.columnAddress.Width = 220;
+            this.columnAddress.Width = 60;
             // 
             // columnOperationType
             // 
+            this.columnOperationType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.columnOperationType.DropDownWidth = 180;
+            this.columnOperationType.FillWeight = 50F;
             this.columnOperationType.HeaderText = "操作类型";
-            this.columnOperationType.MinimumWidth = 100;
+            this.columnOperationType.MinimumWidth = 20;
             this.columnOperationType.Name = "columnOperationType";
-            this.columnOperationType.Width = 180;
+            this.columnOperationType.Width = 67;
             // 
             // columnValue
             // 
+            this.columnValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.columnValue.DefaultCellStyle = dataGridViewCellStyle3;
+            this.columnValue.FillWeight = 50F;
             this.columnValue.HeaderText = "值";
-            this.columnValue.MinimumWidth = 150;
+            this.columnValue.MinimumWidth = 50;
             this.columnValue.Name = "columnValue";
-            this.columnValue.Width = 200;
+            this.columnValue.Width = 50;
             // 
             // columnResult
             // 
+            this.columnResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.columnResult.DefaultCellStyle = dataGridViewCellStyle4;
+            this.columnResult.FillWeight = 50F;
             this.columnResult.HeaderText = "结果";
-            this.columnResult.MinimumWidth = 250;
+            this.columnResult.MinimumWidth = 100;
             this.columnResult.Name = "columnResult";
-            this.columnResult.Width = 320;
             // 
             // btnReadAll
             // 
-            this.btnReadAll.Location = new System.Drawing.Point(720, 520);
-            this.btnReadAll.Margin = new System.Windows.Forms.Padding(8);
+            this.btnReadAll.Location = new System.Drawing.Point(288, 208);
             this.btnReadAll.Name = "btnReadAll";
-            this.btnReadAll.Size = new System.Drawing.Size(188, 70);
+            this.btnReadAll.Size = new System.Drawing.Size(75, 28);
             this.btnReadAll.TabIndex = 7;
             this.btnReadAll.Text = "批量读取";
             this.btnReadAll.UseVisualStyleBackColor = true;
@@ -1693,10 +1696,9 @@ namespace MelsecPLCCommunicator.UI
             // 
             // btnWriteAll
             // 
-            this.btnWriteAll.Location = new System.Drawing.Point(939, 520);
-            this.btnWriteAll.Margin = new System.Windows.Forms.Padding(8);
+            this.btnWriteAll.Location = new System.Drawing.Point(376, 208);
             this.btnWriteAll.Name = "btnWriteAll";
-            this.btnWriteAll.Size = new System.Drawing.Size(188, 70);
+            this.btnWriteAll.Size = new System.Drawing.Size(75, 28);
             this.btnWriteAll.TabIndex = 8;
             this.btnWriteAll.Text = "批量写入";
             this.btnWriteAll.UseVisualStyleBackColor = true;
@@ -1710,93 +1712,74 @@ namespace MelsecPLCCommunicator.UI
             this.panelLog.Controls.Add(this.btnClearLog);
             this.panelLog.Controls.Add(this.txtLog);
             this.panelLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelLog.Location = new System.Drawing.Point(1151, 24);
-            this.panelLog.Margin = new System.Windows.Forms.Padding(8);
+            this.panelLog.Location = new System.Drawing.Point(460, 24);
             this.panelLog.Name = "panelLog";
-            this.panelLog.Size = new System.Drawing.Size(1238, 1381);
+            this.panelLog.Size = new System.Drawing.Size(624, 643);
             this.panelLog.TabIndex = 2;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(38, 23);
-            this.label6.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.label6.Location = new System.Drawing.Point(15, 9);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(103, 30);
+            this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 4;
             this.label6.Text = "日志：";
             // 
             // btnLoadLog
             // 
-            this.btnLoadLog.Location = new System.Drawing.Point(527, 11);
-            this.btnLoadLog.Margin = new System.Windows.Forms.Padding(8);
+            this.btnLoadLog.Location = new System.Drawing.Point(211, 4);
             this.btnLoadLog.Name = "btnLoadLog";
-            this.btnLoadLog.Size = new System.Drawing.Size(176, 54);
+            this.btnLoadLog.Size = new System.Drawing.Size(70, 22);
             this.btnLoadLog.TabIndex = 3;
             this.btnLoadLog.Text = "加载";
             this.btnLoadLog.UseVisualStyleBackColor = true;
             // 
             // btnSaveLog
             // 
-            this.btnSaveLog.Location = new System.Drawing.Point(338, 11);
-            this.btnSaveLog.Margin = new System.Windows.Forms.Padding(8);
+            this.btnSaveLog.Location = new System.Drawing.Point(135, 4);
             this.btnSaveLog.Name = "btnSaveLog";
-            this.btnSaveLog.Size = new System.Drawing.Size(176, 54);
+            this.btnSaveLog.Size = new System.Drawing.Size(70, 22);
             this.btnSaveLog.TabIndex = 2;
             this.btnSaveLog.Text = "保存";
             this.btnSaveLog.UseVisualStyleBackColor = true;
             // 
             // btnClearLog
             // 
-            this.btnClearLog.Location = new System.Drawing.Point(148, 11);
-            this.btnClearLog.Margin = new System.Windows.Forms.Padding(8);
+            this.btnClearLog.Location = new System.Drawing.Point(59, 4);
             this.btnClearLog.Name = "btnClearLog";
-            this.btnClearLog.Size = new System.Drawing.Size(176, 54);
+            this.btnClearLog.Size = new System.Drawing.Size(70, 22);
             this.btnClearLog.TabIndex = 1;
             this.btnClearLog.Text = "清除";
             this.btnClearLog.UseVisualStyleBackColor = true;
             // 
             // txtLog
             // 
-            this.txtLog.Location = new System.Drawing.Point(14, 73);
-            this.txtLog.Margin = new System.Windows.Forms.Padding(8);
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLog.Location = new System.Drawing.Point(6, 29);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(1208, 1212);
+            this.txtLog.Size = new System.Drawing.Size(614, 592);
             this.txtLog.TabIndex = 0;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(40, 40);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripProgressBar1});
-            this.statusStrip1.Location = new System.Drawing.Point(1151, 1357);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 33, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1238, 48);
-            this.statusStrip1.TabIndex = 3;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripProgressBar1
-            // 
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 32);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 30F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2389, 1405);
-            this.Controls.Add(this.statusStrip1);
+            this.ClientSize = new System.Drawing.Size(1084, 667);
             this.Controls.Add(this.panelLog);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(8);
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(1100, 706);
+            this.MinimumSize = new System.Drawing.Size(1100, 706);
             this.Name = "MainForm";
-            this.Text = "Mitsubishi PLC Communication V3";
+            this.Text = "Mitsubishi PLC Communication";
             this.panelMain.ResumeLayout(false);
             this.groupBoxConnection.ResumeLayout(false);
             this.groupBoxConnection.PerformLayout();
@@ -1809,8 +1792,6 @@ namespace MelsecPLCCommunicator.UI
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewBatch)).EndInit();
             this.panelLog.ResumeLayout(false);
             this.panelLog.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1853,7 +1834,6 @@ namespace MelsecPLCCommunicator.UI
         private System.Windows.Forms.Button btnClearLog;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.StatusStrip statusStrip1;
 
        
     }
